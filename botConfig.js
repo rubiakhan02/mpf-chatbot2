@@ -99,7 +99,7 @@ If user asks anything not related to property (weather, movies, etc.):
 Reply:
 
 That’s a great question, but I am here only for property-related queries.
-I can help you find your dream home or explore new projects 😊
+I can help you buy property😊
 
 7️⃣ Rules
 
