@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyPropertyFact Chatbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=4">
+    <style>
+        /* Fallback for launcher visibility to ensure it's always clickable */
+        #chatbot-launcher {
+            z-index: 2147483647 !important;
+            /* Max z-index */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Main Website Content Simulation -->
+    <div style="text-align: center; margin-top: 100px; font-family: 'Outfit', sans-serif; color: #334155;">
+        <h1 style="font-weight: 600;">MyPropertyFact</h1>
+        <p>Your trusted real estate partner.</p>
+        <p style="font-size: 0.9rem; color: #64748b;">(Click the chat icon in the bottom right)</p>
+    </div>
+
+    <!-- Chatbot Launcher -->
+    <button id="chatbot-launcher" aria-label="Open Chatbot">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2-2z"></path>
+        </svg>
+    </button>
+
+    <!-- Chatbot Container -->
+    <div id="chatbot-container" class="hidden">
+        <div class="chatbot-header">
+            <div class="header-info">
+                <div class="avatar" style="background: white; padding: 2px;">
+                    <img src="logo.png" alt="MPF Logo" style="width: 100%; height: 100%; object-fit: contain;">
+                </div>
+                <div>
+                    <h3>MyPropertyFact</h3>
+                    <span class="status">Online</span>
+                </div>
+            </div>
+            <button id="chatbot-close" aria-label="Close Chatbot">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+
+        <div id="chatbot-messages">
+            <!-- Dynamic messages will appear here -->
+        </div>
+
+        <div class="chatbot-input">
+            <input type="text" id="user-input" placeholder="Type a message..." autocomplete="off">
+            <button id="send-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="22" y1="2" x2="11" y2="13"></line>
+                    <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="script.js?v=4"></script>
+</body>
+
+</html>
