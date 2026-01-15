@@ -25,7 +25,9 @@ async function probe() {
         } catch (e) { }
     }
 
-    // Check Type 4 ?
+    // Check Type 
+
+
     console.log("Checking Type 4:");
     for (let i = 1; i <= 10; i++) {
         try {
