@@ -383,14 +383,13 @@ async function generateAIResponse(message, sessionId) {
                 const city = session.data.city || '';
                 const budget = session.data.budget || '';
 
-                // Construct URL with filters
-                const params = new URLSearchParams({
-                    type: type,
-                    city: city,
-                    budget: budget
-                });
+                const typeId = PROPERTY_TYPE_MAP[session.data.type] || 1;
+                const cityId = CITY_MAP[session.data.city] || 2;
+                // Append * as per requirement and ensure spaces are +
+                const rawBudget = session.data.budget || 'Up to 1Cr';
+                const formattedBudget = rawBudget.replace(/\s+/g, '+') + '*';
 
-                const redirectUrl = `https://mypropertyfact.in/?${params.toString()}`;
+                const redirectUrl = `https://mypropertyfact.in/projects?propertyType=${typeId}&propertyLocation=${cityId}&budget=${formattedBudget}`;
 
                 return {
                     reply: `Great! Taking you to explore more projects based on your selection... 🚀`,
@@ -445,6 +444,18 @@ app.post('/api/save-lead', async (req, res) => {
             'INSERT INTO form_leads (name, phone, email, project_name, property_type, city, budget) VALUES (?, ?, ?, ?, ?, ?, ?)',
             [name, mobile, email, project || 'General', type || 'N/A', city || 'N/A', budget || 'N/A']
         );
+
+        // --- NEW EXTERNAL API INTEGRATION ---
+        try {
+            await axios.post('https://apis.mypropertyfact.in/enquiry/post', {
+                name: name,
+                email: email,
+                phone: mobile
+            });
+        } catch (apiError) {
+            console.error("External Enquiry API Failed:", apiError.message);
+        }
+        // ------------------------------------
 
         res.json({
             success: true,
