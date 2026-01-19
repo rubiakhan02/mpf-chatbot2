@@ -418,7 +418,7 @@ async function generateAIResponse(message, sessionId) {
     }
 }
 
-app.post('/api/chat', async (req, res) => {
+app.post('https://mpf-chatbot2.onrender.com/api/chat', async (req, res) => {
     try {
         const { message, sessionId } = req.body;
         const responseData = await generateAIResponse(message, sessionId || 'default');
@@ -429,7 +429,7 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-app.post('/api/save-lead', async (req, res) => {
+app.post('https://mpf-chatbot2.onrender.com/api/save-lead', async (req, res) => {
     const { name, mobile, email, project, sessionId } = req.body;
 
     if (!name || !mobile || !email) {
@@ -470,7 +470,7 @@ app.post('/api/save-lead', async (req, res) => {
 });
 
 // Legacy generic
-app.post('/api/save-form-data', async (req, res) => {
+app.post('https://mpf-chatbot2.onrender.com/api/save-form-data', async (req, res) => {
     const { name, phone, email } = req.body;
     try {
         const [result] = await pool.execute(
