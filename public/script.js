@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errorDiv.textContent = 'Please enter a valid email address.'; return; }
 
             errorDiv.textContent = '';
-            submitBtn.textContent = 'Submitting...';
+            submitBtn.textContent = 'Submitting... ⏳';
             submitBtn.disabled = true;
 
             try {

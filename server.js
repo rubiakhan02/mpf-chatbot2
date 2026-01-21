@@ -450,7 +450,13 @@ app.post('/api/save-lead', async (req, res) => {
             await axios.post('https://apis.mypropertyfact.in/enquiry/post', {
                 name: name,
                 email: email,
-                phone: mobile
+                phone: mobile,
+                message: null,
+                pageName: null,
+                enquiryFrom: null,
+                projectLink: "https://www.mypropertyfact.com/contact-us",
+                status: "PENDING",
+                id: 0
             });
         } catch (apiError) {
             console.error("External Enquiry API Failed:", apiError.message);
