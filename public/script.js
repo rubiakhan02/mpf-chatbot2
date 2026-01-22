@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('https://apis.mypropertyfact.in/enquiry/post', {
+                const response = await fetch('/enquiry/post', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -243,15 +243,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await response.json();
 
                 if (res.success) {
-                    formDiv.innerHTML = `<div class="form-success">${res.reply.replace(/\n/g, '<br>')}</div>`; // Show success inside form bubble
+                    formDiv.innerHTML = `<div class="form-success">Thank you for sharing your details! Our consultation team will contact you within 24 hours.</div>`;
 
-                    // Show Follow Up
-                    if (res.followUp) {
-                        setTimeout(() => {
-                            addMessage(res.followUp, 'bot');
-                            if (res.options) addOptions(res.options);
-                        }, 1000);
-                    }
+                    // Maintain conversation context and push the bot messages
+                    conversationHistory.push({ sender: 'bot', message: 'Thank you for sharing your details! Our consultation team will contact you within 24 hours.' });
+
+                    // Immediate follow-up question and options (use texts compatible with server logic)
+                    setTimeout(() => {
+                        const followUpText = 'Would you like to see more projects?';
+                        addMessage(followUpText, 'bot');
+                        conversationHistory.push({ sender: 'bot', message: followUpText });
+                        // Use option labels that the server recognises so the existing flow continues
+                        addOptions(['Yes, explore more', 'No, thank you']);
+                        // Disable free text until user picks an option
+                        userInput.disabled = true;
+                        userInput.placeholder = "Please select an option";
+                    }, 800);
                 } else {
                     errorDiv.textContent = res.message || 'Submission failed.';
                     submitBtn.disabled = false;

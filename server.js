@@ -7,7 +7,15 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// CORS Configuration
+const corsOptions = {
+    origin: '*', // Allow all origins for now (or specify: ['https://mypropertyfact.in', 'http://localhost:3000'])
+    methods: ['GET', 'POST', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+    optionsSuccessStatus: 200
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static('public'));
 
@@ -429,7 +437,7 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-app.post('https://apis.mypropertyfact.in/enquiry/post', async (req, res) => {
+app.post('/enquiry/post', async (req, res) => {
     const { name, mobile, email, project, sessionId } = req.body;
 
     if (!name || !mobile || !email) {
