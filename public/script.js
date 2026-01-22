@@ -240,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         project: projectName
                     })
                 });
+
                 const res = await response.json();
 
                 if (res.success) {

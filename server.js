@@ -7,15 +7,26 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// CORS Configuration
-const corsOptions = {
-    origin: ['https://mypropertyfact.in', 'http://localhost:3000', 'https://mpf-chatbot2.onrender.com/'], // Allow all origins for now (or specify: ['https://mypropertyfact.in', 'http://localhost:3000'])
-    methods: ['GET', 'POST', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true,
-    optionsSuccessStatus: 200
-};
-app.use(cors(corsOptions));
+const allowedOrigins = [
+  'https://mypropertyfact.in',
+  'http://localhost:3000',
+  'https://mpf-chatbot2.onrender.com'
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // for postman
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(express.static('public'));
 
