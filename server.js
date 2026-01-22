@@ -965,11 +965,19 @@ async function generateAIResponse(message, sessionId) {
 
         case STATES.RESULTS:
             if (['yes', 'yes, please', 'sure'].includes(msg)) {
-                session.step = STATES.WELCOME;
-                session.data = {};
+
+                const typeId = PROPERTY_TYPE_MAP[session.data.type] || 1;
+                const cityId = CITY_MAP[session.data.city] || 2;
+                const apiBudget = session.data.budget;
+
+                const redirectParam = `propertyType=${typeId}&propertyLocation=${cityId}&budget=${encodeURIComponent(apiBudget)}`;
+
+                // Redirect with filters
+                const targetUrl = `https://mypropertyfact.in/projects/search-by-type-city-budget?${redirectParam}`;
+
                 return {
-                    reply: `Great! Let's find more properties.\n\nPlease select your property type to get started.`,
-                    options: ['Commercial', 'Residential', 'New Launch']
+                    reply: `Redirecting you to view more projects on our website...`,
+                    redirectUrl: targetUrl
                 };
             }
 
@@ -1082,19 +1090,22 @@ const server = http.createServer(async (req, res) => {
 
                 // --- NEW EXTERNAL API INTEGRATION ---
                 try {
-                    await axios.post('https://apis.mypropertyfact.in/enquiry/post', {
-                        name: name,
-                        email: email,
+                    const externalResponse = await axios.post('https://apis.mypropertyfact.in/enquiry/post', {
+                        name: name, // User Name
+                        email: email, // User Email
                         phone: mobile,
                         message: null,
                         pageName: null,
                         enquiryFrom: null,
-                        projectLink: "https://www.mypropertyfact.com/contact-us",
+                        projectLink: project ? `https://mypropertyfact.in/${project.toLowerCase().replace(/\s+/g, '-')}` : "https://www.mypropertyfact.com/contact-us",
                         status: "PENDING",
                         id: 0
                     });
+                    console.log(`[Lead] External API Response:`, externalResponse.data);
+                    console.log(`[Lead] Sent to External API for: ${name} (${mobile})`);
                 } catch (apiError) {
                     console.error("External Enquiry API Failed:", apiError.message);
+                    if (apiError.response) console.error("Response Data:", apiError.response.data);
                 }
                 // ------------------------------------
 
