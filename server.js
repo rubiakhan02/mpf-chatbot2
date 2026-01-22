@@ -1095,8 +1095,8 @@ const server = http.createServer(async (req, res) => {
                 // --- NEW EXTERNAL API INTEGRATION ---
                 try {
                     const externalResponse = await axios.post('https://apis.mypropertyfact.in/enquiry/post', {
-                        name: name, // User Name
-                        email: email, // User Email
+                        name: name,
+                        email: email,
                         phone: mobile,
                         message: null,
                         pageName: null,
@@ -1105,21 +1105,34 @@ const server = http.createServer(async (req, res) => {
                         status: "PENDING",
                         id: 0
                     });
+
                     console.log(`[Lead] External API Response:`, externalResponse.data);
-                    console.log(`[Lead] Sent to External API for: ${name} (${mobile})`);
+
+                    // STRICT VERIFICATION: Only verify success if External API says so
+                    if (externalResponse.data && externalResponse.data.isSuccess === 1) {
+                        res.writeHead(200, { 'Content-Type': 'application/json' });
+                        res.end(JSON.stringify({
+                            success: true, // Only true if External API confirmed
+                            reply: `Thank you for sharing your details!\nOur consultant will contact you within 24 hours.`,
+                            followUp: `Would you like to explore more projects?`,
+                            options: ['Yes', 'No']
+                        }));
+                    } else {
+                        // External API returned 200 OK but said "Success: 0" or similar
+                        throw new Error(`External API declined: ${JSON.stringify(externalResponse.data)}`);
+                    }
+
                 } catch (apiError) {
                     console.error("External Enquiry API Failed:", apiError.message);
                     if (apiError.response) console.error("Response Data:", apiError.response.data);
+
+                    res.writeHead(500, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({
+                        success: false,
+                        message: 'Submission failed. Please try again.'
+                    }));
                 }
                 // ------------------------------------
-
-                res.writeHead(200, { 'Content-Type': 'application/json' });
-                res.end(JSON.stringify({
-                    success: true,
-                    reply: `Thank you for sharing your details!\nOur consultant will contact you within 24 hours.`,
-                    followUp: `Would you like to explore more projects?`,
-                    options: ['Yes', 'No']
-                }));
             } catch (e) {
                 console.error("Lead Submission Error:", e.message);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
