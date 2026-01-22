@@ -429,7 +429,7 @@ app.post('/api/chat', async (req, res) => {
     }
 });
 
-app.post('/api/save-lead', async (req, res) => {
+app.post('https://apis.mypropertyfact.in/enquiry/post', async (req, res) => {
     const { name, mobile, email, project, sessionId } = req.body;
 
     if (!name || !mobile || !email) {
