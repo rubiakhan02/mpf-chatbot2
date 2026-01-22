@@ -1010,10 +1010,14 @@ const server = http.createServer(async (req, res) => {
     // CORS headers
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With');
 
     if (method === 'OPTIONS') {
-        res.writeHead(200);
+        res.writeHead(204, {
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+            'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With'
+        });
         res.end();
         return;
     }
@@ -1061,7 +1065,7 @@ const server = http.createServer(async (req, res) => {
         return;
     }
 
-    if (method === 'POST' && pathname === 'https://apis.mypropertyfact.in/enquiry/post') {
+    if (method === 'POST' && (pathname === '/enquiry/post' || pathname === '/api/enquiry/post')) {
         let body = '';
         req.on('data', chunk => body += chunk);
         req.on('end', async () => {
