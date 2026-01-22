@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('/api/save-lead', {
+                const response = await fetch('https://apis.mypropertyfact.in/enquiry/post', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
