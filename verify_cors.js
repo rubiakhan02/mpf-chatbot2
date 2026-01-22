@@ -2,7 +2,7 @@ const axios = require('axios');
 
 async function verify() {
     console.log("Starting Verification...");
-    const url = 'http://localhost:3000/enquiry/post';
+    const url = 'https://apis.mypropertyfact.in/enquiry/post' | 'http://localhost:3000/enquiry/post';
 
     // 1. Test OPTIONS (Preflight)
     try {
