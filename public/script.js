@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottom();
 
         try {
-            const response = await fetch('/api/chat', {
+            const response = await fetch('https://apis.mypropertyfact.in/enquiry/post', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
