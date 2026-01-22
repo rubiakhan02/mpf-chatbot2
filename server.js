@@ -1,34 +1,12 @@
-const express = require('express');
-const cors = require('cors');
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
 const mysql = require('mysql2/promise');
 const axios = require('axios');
 require('dotenv').config();
 
-const app = express();
 const PORT = process.env.PORT || 3000;
-
-const allowedOrigins = [
-  'https://mypropertyfact.in',
-  'http://localhost:3000',
-  'https://mpf-chatbot2.onrender.com'
-];
-
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // for postman
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-}));
-
-app.use(express.json());
-app.use(express.static('public'));
 
 // MySQL Connection
 const pool = mysql.createPool({
@@ -398,29 +376,18 @@ async function generateAIResponse(message, sessionId) {
 
         case STATES.RESULTS:
             if (['yes', 'yes, please', 'sure'].includes(msg)) {
-                const type = session.data.type || '';
-                const city = session.data.city || '';
-                const budget = session.data.budget || '';
-
-                const typeId = PROPERTY_TYPE_MAP[session.data.type] || 1;
-                const cityId = CITY_MAP[session.data.city] || 2;
-                // Append * as per requirement and ensure spaces are +
-                const rawBudget = session.data.budget || 'Up to 1Cr';
-                const formattedBudget = rawBudget.replace(/\s+/g, '+') + '*';
-
-                const redirectUrl = `https://mypropertyfact.in/projects?propertyType=${typeId}&propertyLocation=${cityId}&budget=${formattedBudget}`;
-
+                session.step = STATES.WELCOME;
+                session.data = {};
                 return {
-                    reply: `Great! Taking you to explore more projects based on your selection... 🚀`,
-                    redirectUrl: redirectUrl,
-                    options: ['Restart']
+                    reply: `Great! Let's find more properties.\n\nPlease select your property type to get started.`,
+                    options: ['Commercial', 'Residential', 'New Launch']
                 };
             }
 
             if (['no', 'no, thanks'].includes(msg)) {
                 return {
-                    reply: `It was a pleasure helping you! Have a great day. 👋`,
-                    options: ['Restart']
+                    reply: `Thank you for your time!\nHave a great day 😊`,
+                    options: []
                 };
             }
 
@@ -437,74 +404,145 @@ async function generateAIResponse(message, sessionId) {
     }
 }
 
-app.post('/api/chat', async (req, res) => {
-    try {
-        const { message, sessionId } = req.body;
-        const responseData = await generateAIResponse(message, sessionId || 'default');
-        res.json(responseData);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+// Request handler
+const server = http.createServer(async (req, res) => {
+    const parsedUrl = url.parse(req.url, true);
+    const pathname = parsedUrl.pathname;
+    const method = req.method;
+
+    // CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    if (method === 'OPTIONS') {
+        res.writeHead(200);
+        res.end();
+        return;
     }
-});
 
-app.post('/enquiry/post', async (req, res) => {
-    const { name, mobile, email, project, sessionId } = req.body;
-
-    if (!name || !mobile || !email) {
-        return res.status(400).json({ success: false, message: 'All fields required' });
-    }
-
-    const session = sessions[sessionId] || { data: {} };
-    const { type, city, budget } = session.data || {};
-
-    try {
-        await pool.execute(
-            'INSERT INTO form_leads (name, phone, email, project_name, property_type, city, budget) VALUES (?, ?, ?, ?, ?, ?, ?)',
-            [name, mobile, email, project || 'General', type || 'N/A', city || 'N/A', budget || 'N/A']
-        );
-
-        // --- NEW EXTERNAL API INTEGRATION ---
-        try {
-            await axios.post('https://apis.mypropertyfact.in/enquiry/post', {
-                name: name,
-                email: email,
-                phone: mobile,
-                message: null,
-                pageName: null,
-                enquiryFrom: null,
-                projectLink: "https://www.mypropertyfact.com/contact-us",
-                status: "PENDING",
-                id: 0
-            });
-        } catch (apiError) {
-            console.error("External Enquiry API Failed:", apiError.message);
-        }
-        // ------------------------------------
-
-        res.json({
-            success: true,
-            reply: `Thank you! 🙌\nOur expert will contact you shortly regarding\n*${project}*`,
-            followUp: `Would you like to explore more projects?`,
-            options: ['Yes, explore more', 'No, thank you']
+    // Static files
+    if (method === 'GET') {
+        let filePath = path.join(__dirname, 'public', pathname === '/' ? 'index.html' : pathname);
+        fs.readFile(filePath, (err, data) => {
+            if (err) {
+                res.writeHead(404, { 'Content-Type': 'text/plain' });
+                res.end('Not Found');
+                return;
+            }
+            const ext = path.extname(filePath);
+            const contentType = {
+                '.html': 'text/html',
+                '.js': 'application/javascript',
+                '.css': 'text/css',
+                '.png': 'image/png',
+                '.jpg': 'image/jpeg',
+                '.ico': 'image/x-icon'
+            }[ext] || 'text/plain';
+            res.writeHead(200, { 'Content-Type': contentType });
+            res.end(data);
         });
-    } catch (e) {
-        console.error("DB Save Error:", e.message);
-        console.error("Stack:", e.stack);
-        res.status(500).json({ success: false, message: 'Database error' });
+        return;
     }
-});
 
-// Legacy generic
-app.post('/api/save-form-data', async (req, res) => {
-    const { name, phone, email } = req.body;
-    try {
-        const [result] = await pool.execute(
-            'INSERT INTO form_leads (name, phone, email) VALUES (?, ?, ?)',
-            [name, phone, email]
-        );
-        res.json({ success: true });
-    } catch (e) { res.status(500).json({ success: false }); }
+    // API endpoints
+    if (method === 'POST' && pathname === '/api/chat') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', async () => {
+            try {
+                const { message, sessionId } = JSON.parse(body);
+                const responseData = await generateAIResponse(message, sessionId || 'default');
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify(responseData));
+            } catch (error) {
+                console.error('Error:', error);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ error: 'Internal Server Error' }));
+            }
+        });
+        return;
+    }
+
+    if (method === 'POST' && pathname === '/enquiry/post') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', async () => {
+            try {
+                const { name, mobile, email, project, sessionId } = JSON.parse(body);
+
+                if (!name || !mobile || !email) {
+                    res.writeHead(400, { 'Content-Type': 'application/json' });
+                    res.end(JSON.stringify({ success: false, message: 'All fields required' }));
+                    return;
+                }
+
+                const session = sessions[sessionId] || { data: {} };
+                const { type, city, budget } = session.data || {};
+
+                await pool.execute(
+                    'INSERT INTO form_leads (name, phone, email, project_name, property_type, city, budget) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                    [name, mobile, email, project || 'General', type || 'N/A', city || 'N/A', budget || 'N/A']
+                );
+
+                // --- NEW EXTERNAL API INTEGRATION ---
+                try {
+                    await axios.post('https://apis.mypropertyfact.in/enquiry/post', {
+                        name: name,
+                        email: email,
+                        phone: mobile,
+                        message: null,
+                        pageName: null,
+                        enquiryFrom: null,
+                        projectLink: "https://www.mypropertyfact.com/contact-us",
+                        status: "PENDING",
+                        id: 0
+                    });
+                } catch (apiError) {
+                    console.error("External Enquiry API Failed:", apiError.message);
+                }
+                // ------------------------------------
+
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({
+                    success: true,
+                    reply: `Thank you for sharing your details!\nOur consultant will contact you within 24 hours.`,
+                    followUp: `Would you like to explore more projects?`,
+                    options: ['Yes', 'No']
+                }));
+            } catch (e) {
+                console.error("DB Save Error:", e.message);
+                console.error("Stack:", e.stack);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false, message: 'Database error' }));
+            }
+        });
+        return;
+    }
+
+    // Legacy generic
+    if (method === 'POST' && pathname === '/api/save-form-data') {
+        let body = '';
+        req.on('data', chunk => body += chunk);
+        req.on('end', async () => {
+            try {
+                const { name, phone, email } = JSON.parse(body);
+                await pool.execute(
+                    'INSERT INTO form_leads (name, phone, email) VALUES (?, ?, ?)',
+                    [name, phone, email]
+                );
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: true }));
+            } catch (e) {
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end(JSON.stringify({ success: false }));
+            }
+        });
+        return;
+    }
+
+    res.writeHead(404, { 'Content-Type': 'text/plain' });
+    res.end('Not Found');
 });
 
 // Initialize database table
@@ -529,10 +567,12 @@ async function initDB() {
     }
 }
 
-app.listen(PORT, async () => {
-    await initDB();
-    console.log("==================================================");
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log("IMAGE LOGIC UPDATED: Slug based URLs (m3m-jacob...)");
-    console.log("==================================================");
+// Start server
+initDB().then(() => {
+    server.listen(PORT, () => {
+        console.log("==================================================");
+        console.log(`Server running on http://localhost:${PORT}`);
+        console.log("IMAGE LOGIC UPDATED: Slug based URLs (m3m-jacob...)");
+        console.log("==================================================");
+    });
 });
