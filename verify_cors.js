@@ -2,14 +2,14 @@ const axios = require('axios');
 
 async function verify() {
     console.log("Starting Verification...");
-    const url = 'https://apis.mypropertyfact.in/enquiry/post' | 'http://localhost:3000/enquiry/post';
+    const url = 'https://apis.mypropertyfact.in/enquiry/post' | 'http://localhost:3000/enquiry/post' | 'https://mpf-chatbot2.onrender.com';
 
     // 1. Test OPTIONS (Preflight)
     try {
         console.log("\n--- Testing OPTIONS Request ---");
         const optionsRes = await axios.options(url, {
             headers: {
-                'Origin': 'https://example.com',
+                'Origin': 'https://apis.mypropertyfact.in',
                 'Access-Control-Request-Method': 'POST',
                 'Access-Control-Request-Headers': 'Content-Type'
             }

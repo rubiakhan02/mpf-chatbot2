@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // CORS Configuration
 const corsOptions = {
-    origin: '*', // Allow all origins for now (or specify: ['https://mypropertyfact.in', 'http://localhost:3000'])
+    origin: ['https://mypropertyfact.in', 'http://localhost:3000', 'https://mpf-chatbot2.onrender.com/'], // Allow all origins for now (or specify: ['https://mypropertyfact.in', 'http://localhost:3000'])
     methods: ['GET', 'POST', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
