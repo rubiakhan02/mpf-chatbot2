@@ -478,7 +478,8 @@ app.post('/enquiry/post', async (req, res) => {
             options: ['Yes, explore more', 'No, thank you']
         });
     } catch (e) {
-        console.error("DB Save Error:", e);
+        console.error("DB Save Error:", e.message);
+        console.error("Stack:", e.stack);
         res.status(500).json({ success: false, message: 'Database error' });
     }
 });
@@ -495,7 +496,30 @@ app.post('/api/save-form-data', async (req, res) => {
     } catch (e) { res.status(500).json({ success: false }); }
 });
 
-app.listen(PORT, () => {
+// Initialize database table
+async function initDB() {
+    try {
+        await pool.execute(`
+            CREATE TABLE IF NOT EXISTS form_leads (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(255) NOT NULL,
+                phone VARCHAR(15) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                project_name VARCHAR(255),
+                property_type VARCHAR(50),
+                city VARCHAR(50),
+                budget VARCHAR(50),
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )
+        `);
+        console.log("Database table initialized.");
+    } catch (e) {
+        console.error("DB Init Error:", e);
+    }
+}
+
+app.listen(PORT, async () => {
+    await initDB();
     console.log("==================================================");
     console.log(`Server running on http://localhost:${PORT}`);
     console.log("IMAGE LOGIC UPDATED: Slug based URLs (m3m-jacob...)");
