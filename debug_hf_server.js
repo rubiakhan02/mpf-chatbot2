@@ -20,6 +20,8 @@ async function testServerLogic() {
         console.log("Success:", JSON.stringify(result, null, 2));
     } catch (error) {
         console.error("Full Error Object:", error);
+
+        
         if (error.response) {
             console.error("Status:", error.response.status);
             error.response.json().then(data => console.error("Data:", data)).catch(() => console.error("No Body"));

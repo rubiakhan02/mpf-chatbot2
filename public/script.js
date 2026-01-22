@@ -229,7 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.disabled = true;
 
             try {
-                const response = await fetch('https://apis.mypropertyfact.in/enquiry/post', {
+                const response = await fetch('/enquiry/post', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -244,18 +244,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await response.json();
 
                 if (res.success) {
-                    formDiv.innerHTML = `<div class="form-success">Thank you for sharing your details! Our consultation team will contact you within 24 hours.</div>`;
+                    formDiv.innerHTML = `<div class="form-success">${res.reply.replace(/\n/g, '<br>')}</div>`;
 
                     // Maintain conversation context and push the bot messages
-                    conversationHistory.push({ sender: 'bot', message: 'Thank you for sharing your details! Our consultation team will contact you within 24 hours.' });
+                    conversationHistory.push({ sender: 'bot', message: res.reply });
 
                     // Immediate follow-up question and options (use texts compatible with server logic)
                     setTimeout(() => {
-                        const followUpText = 'Would you like to see more projects?';
-                        addMessage(followUpText, 'bot');
-                        conversationHistory.push({ sender: 'bot', message: followUpText });
-                        // Use option labels that the server recognises so the existing flow continues
-                        addOptions(['Yes, explore more', 'No, thank you']);
+                        addMessage(res.followUp, 'bot');
+                        conversationHistory.push({ sender: 'bot', message: res.followUp });
+                        // Use option labels from response
+                        addOptions(res.options);
                         // Disable free text until user picks an option
                         userInput.disabled = true;
                         userInput.placeholder = "Please select an option";
