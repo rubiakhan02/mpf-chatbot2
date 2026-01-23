@@ -251,14 +251,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Immediate follow-up question and options (use texts compatible with server logic)
                     setTimeout(() => {
-                        addMessage(res.followUp, 'bot');
-                        conversationHistory.push({ sender: 'bot', message: res.followUp });
+                        if (res.followUp) {
+                            addMessage(res.followUp, 'bot');
+                            conversationHistory.push({ sender: 'bot', message: res.followUp });
+                        }
                         // Use option labels from response
-                        addOptions(res.options);
-                        // Disable free text until user picks an option
-                        userInput.disabled = true;
-                        userInput.placeholder = "Please select an option";
-                    }, 800);
+                        if (res.options && res.options.length > 0) {
+                            addOptions(res.options);
+                            // Disable free text until user picks an option
+                            userInput.disabled = true;
+                            userInput.placeholder = "Please select an option";
+                        }
+                    }, 500);
                 } else {
                     errorDiv.textContent = res.message || 'Submission failed.';
                     submitBtn.disabled = false;
