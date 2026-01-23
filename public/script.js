@@ -62,11 +62,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const oldForms = document.querySelectorAll('.custom-form');
         oldForms.forEach(form => form.remove());
 
+        // Check for specific redirect condition
+        let lastBotMessage = null;
+        for (let i = conversationHistory.length - 1; i >= 0; i--) {
+            if (conversationHistory[i].sender === 'bot') {
+                lastBotMessage = conversationHistory[i].message;
+                break;
+            }
+        }
+        if (lastBotMessage && lastBotMessage.includes("Would you like to see more projects?")) {
+            if (userText.toLowerCase() === 'yes') {
+                window.open('https://mypropertyfact.in/projects?propertyType=2&propertyLocation=2&budget=Up+to+1Cr', '_blank');
+                return;
+            } else if (userText.toLowerCase().includes('no') || userText.toLowerCase().includes('not now') || userText.toLowerCase().includes('maybe later') || userText.toLowerCase().includes('later')) {
+                addMessage("Thank you! Have a great day 😊", 'bot');
+                addRestartButton();
+                return;
+            }
+        }
+
         const typingId = showTypingIndicator();
         scrollToBottom();
 
         try {
-            const response = await fetch('https://apis.mypropertyfact.in/enquiry/post', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -244,7 +263,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await response.json();
 
                 if (res.success) {
-                    formDiv.innerHTML = `<div class="form-success">${res.reply.replace(/\n/g, '<br>')}</div>`;
+                    console.log('Enquiry success, displaying confirmation');
+                    formDiv.innerHTML = `<div class="form-success">Thank you for sharing your details. Our consultant will contact you within 24 hours.</div>`;
 
                     // Maintain conversation context and push the bot messages
                     conversationHistory.push({ sender: 'bot', message: res.reply });
@@ -287,6 +307,26 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottom();
     }
 
+    function addRestartButton() {
+        const div = document.createElement('div');
+        div.className = 'chat-options';
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = 'Restart';
+        btn.onclick = () => {
+            messagesContainer.innerHTML = '';
+            conversationHistory = [];
+            addMessage("Hi 👋\nWelcome to My Property Fact!\n\nReady to find the perfect property? 🏡✨\n\nPlease select your property type to get started.", 'bot');
+            addOptions(['Commercial', 'Residential', 'New Launch']);
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            userInput.placeholder = "Please select an option";
+        };
+        div.appendChild(btn);
+        messagesContainer.appendChild(div);
+        scrollToBottom();
+    }
+
     function addMessage(text, sender) {
         const div = document.createElement('div');
         div.className = `message ${sender === 'user' ? 'user-message' : 'bot-message'}`;
@@ -313,6 +353,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+
+    // Restart function
+    window.restartChat = () => {
+        messagesContainer.innerHTML = '';
+        conversationHistory = [];
+        addMessage("Hi 👋\nWelcome to My Property Fact!\n\nReady to find the perfect property? 🏡✨\n\nPlease select your property type to get started.", 'bot');
+        addOptions(['Commercial', 'Residential', 'New Launch']);
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+        userInput.placeholder = "Please select an option";
+    };
 
     // Bind Controls
     sendBtn.addEventListener('click', () => sendMessage());
