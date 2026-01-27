@@ -62,11 +62,30 @@ document.addEventListener('DOMContentLoaded', () => {
         const oldForms = document.querySelectorAll('.custom-form');
         oldForms.forEach(form => form.remove());
 
+        // Check for specific redirect condition
+        let lastBotMessage = null;
+        for (let i = conversationHistory.length - 1; i >= 0; i--) {
+            if (conversationHistory[i].sender === 'bot') {
+                lastBotMessage = conversationHistory[i].message;
+                break;
+            }
+        }
+        if (lastBotMessage && lastBotMessage.includes("Would you like to see more projects?")) {
+            if (userText.toLowerCase() === 'yes') {
+                window.open('https://mypropertyfact.in/projects?propertyType=2&propertyLocation=2&budget=Up+to+1Cr', '_blank');
+                return;
+            } else if (userText.toLowerCase().includes('no') || userText.toLowerCase().includes('not now') || userText.toLowerCase().includes('maybe later') || userText.toLowerCase().includes('later')) {
+                addMessage("Thank you! Have a great day 😊", 'bot');
+                addRestartButton();
+                return;
+            }
+        }
+
         const typingId = showTypingIndicator();
         scrollToBottom();
 
         try {
-            const response = await fetch('https://apis.mypropertyfact.in/enquiry/post', {
+            const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -200,7 +219,18 @@ document.addEventListener('DOMContentLoaded', () => {
         formDiv.innerHTML = `
             <div class="form-title">Please share your details for<br><strong>${projectName}</strong></div>
             <input type="text" id="leadName" class="form-input" placeholder="Full Name *">
-            <input type="tel" id="leadMobile" class="form-input" placeholder="Mobile Number (10 digits) *" maxlength="10">
+            <input 
+  type="tel"
+  id="leadMobile"
+  class="form-input"
+  placeholder="Mobile Number (10 digits) *"
+  maxlength="10"
+  pattern="[6-9][0-9]{9}"
+  required
+  oninvalid="this.setCustomValidity('Please enter a valid 10-digit Indian mobile number')"
+  oninput="this.setCustomValidity('')"
+>
+
             <input type="email" id="leadEmail" class="form-input" placeholder="Email ID *">
             <button id="submitLead" class="submit-btn">Submit</button>
             <div id="formError" class="form-error"></div>
@@ -221,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Validation
             if (!name) { errorDiv.textContent = 'Please enter your name.'; return; }
-            if (!/^\d{10}$/.test(mobile)) { errorDiv.textContent = 'Please enter a valid 10-digit mobile number.'; return; }
+            if (!/^[6-9]\d{9}$/.test(mobile)) { errorDiv.textContent = 'Please enter a valid 10-digit mobile number.'; return; }
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errorDiv.textContent = 'Please enter a valid email address.'; return; }
 
             errorDiv.textContent = '';
@@ -244,21 +274,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 const res = await response.json();
 
                 if (res.success) {
-                    formDiv.innerHTML = `<div class="form-success">${res.reply.replace(/\n/g, '<br>')}</div>`;
+                    console.log('Enquiry success, displaying confirmation');
+                    formDiv.innerHTML = `<div class="form-success">Thank you for sharing your details. Our consultant will contact you within 24 hours.</div>`;
 
                     // Maintain conversation context and push the bot messages
                     conversationHistory.push({ sender: 'bot', message: res.reply });
 
                     // Immediate follow-up question and options (use texts compatible with server logic)
                     setTimeout(() => {
-                        addMessage(res.followUp, 'bot');
-                        conversationHistory.push({ sender: 'bot', message: res.followUp });
+                        if (res.followUp) {
+                            addMessage(res.followUp, 'bot');
+                            conversationHistory.push({ sender: 'bot', message: res.followUp });
+                        }
                         // Use option labels from response
-                        addOptions(res.options);
-                        // Disable free text until user picks an option
-                        userInput.disabled = true;
-                        userInput.placeholder = "Please select an option";
-                    }, 800);
+                        if (res.options && res.options.length > 0) {
+                            addOptions(res.options);
+                            // Disable free text until user picks an option
+                            userInput.disabled = true;
+                            userInput.placeholder = "Please select an option";
+                        }
+                    }, 500);
                 } else {
                     errorDiv.textContent = res.message || 'Submission failed.';
                     submitBtn.disabled = false;
@@ -283,6 +318,26 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.onclick = () => sendMessage(opt);
             div.appendChild(btn);
         });
+        messagesContainer.appendChild(div);
+        scrollToBottom();
+    }
+
+    function addRestartButton() {
+        const div = document.createElement('div');
+        div.className = 'chat-options';
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = 'Restart';
+        btn.onclick = () => {
+            messagesContainer.innerHTML = '';
+            conversationHistory = [];
+            addMessage("Hi 👋\nWelcome to My Property Fact!\n\nReady to find the perfect property? 🏡✨\n\nPlease select your property type to get started.", 'bot');
+            addOptions(['Commercial', 'Residential', 'New Launch']);
+            userInput.disabled = true;
+            sendBtn.disabled = true;
+            userInput.placeholder = "Please select an option";
+        };
+        div.appendChild(btn);
         messagesContainer.appendChild(div);
         scrollToBottom();
     }
@@ -313,6 +368,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function scrollToBottom() {
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
+
+    // Restart function
+    window.restartChat = () => {
+        messagesContainer.innerHTML = '';
+        conversationHistory = [];
+        addMessage("Hi 👋\nWelcome to My Property Fact!\n\nReady to find the perfect property? 🏡✨\n\nPlease select your property type to get started.", 'bot');
+        addOptions(['Commercial', 'Residential', 'New Launch']);
+        userInput.disabled = true;
+        sendBtn.disabled = true;
+        userInput.placeholder = "Please select an option";
+    };
 
     // Bind Controls
     sendBtn.addEventListener('click', () => sendMessage());
