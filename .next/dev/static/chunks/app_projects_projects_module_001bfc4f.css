@@ -1,0 +1,155 @@
+/* [project]/app/projects/projects.module.css [app-client] (css) */
+.projects-module__lnHueG__container {
+  color: #1e293b;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: Inter, sans-serif;
+}
+
+.projects-module__lnHueG__header {
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+}
+
+.projects-module__lnHueG__header h1 {
+  color: #0f172a;
+  margin-bottom: 8px;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.projects-module__lnHueG__header p {
+  color: #64748b;
+  font-size: 1rem;
+}
+
+.projects-module__lnHueG__grid {
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 30px;
+  display: grid;
+}
+
+.projects-module__lnHueG__card {
+  background: #fff;
+  border-radius: 16px;
+  transition: transform .2s;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px #0000001a, 0 2px 4px -1px #0000000f;
+}
+
+.projects-module__lnHueG__card:hover {
+  transform: translateY(-4px);
+}
+
+.projects-module__lnHueG__image {
+  object-fit: cover;
+  width: 100%;
+  height: 200px;
+}
+
+.projects-module__lnHueG__content {
+  padding: 20px;
+}
+
+.projects-module__lnHueG__card h3 {
+  color: #0f172a;
+  margin: 0 0 10px;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.projects-module__lnHueG__location {
+  color: #64748b;
+  margin-bottom: 15px;
+  font-size: .9rem;
+}
+
+.projects-module__lnHueG__details {
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  display: flex;
+}
+
+.projects-module__lnHueG__price {
+  color: #2563eb;
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.projects-module__lnHueG__status {
+  color: #475569;
+  background: #f1f5f9;
+  border-radius: 99px;
+  padding: 4px 12px;
+  font-size: .75rem;
+  font-weight: 600;
+}
+
+.projects-module__lnHueG__builder {
+  color: #94a3b8;
+  margin-bottom: 20px;
+  font-size: .85rem;
+}
+
+.projects-module__lnHueG__actions {
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  display: grid;
+}
+
+.projects-module__lnHueG__btn {
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: .9rem;
+  font-weight: 600;
+  transition: opacity .2s;
+}
+
+.projects-module__lnHueG__viewBtn {
+  color: #fff;
+  background-color: #0f172a;
+  text-decoration: none;
+}
+
+.projects-module__lnHueG__enquireBtn {
+  color: #0f172a;
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+}
+
+.projects-module__lnHueG__noResults {
+  text-align: center;
+  padding: 100px 20px;
+}
+
+.projects-module__lnHueG__noResults h2 {
+  color: #64748b;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.projects-module__lnHueG__backBtn {
+  color: #fff;
+  background-color: #2563eb;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.projects-module__lnHueG__loading {
+  color: #64748b;
+  justify-content: center;
+  align-items: center;
+  height: 400px;
+  font-size: 1.2rem;
+  display: flex;
+}
+
+/*# sourceMappingURL=app_projects_projects_module_001bfc4f.css.map*/
