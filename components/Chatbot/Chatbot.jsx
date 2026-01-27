@@ -173,12 +173,24 @@ export default function Chatbot() {
                             </div>
 
                             {msg.projectCards && msg.projectCards.length > 0 && (
-                                <ProjectSlider cards={msg.projectCards} onEnquire={(name) => {
-                                    setMessages(prev => [...prev, { id: 'form-' + Date.now(), type: 'form', projectName: name }]);
-                                }} />
+                                <ProjectSlider
+                                    cards={msg.projectCards}
+                                    followUp={msg.followUp}
+                                    options={msg.options}
+                                    onOptionClick={(opt) => {
+                                        if (opt.toLowerCase() === 'yes') {
+                                            window.location.href = "https://mypropertyfact.in/projects?propertyType=2&propertyLocation=2&budget=Up+to+1Cr";
+                                        } else {
+                                            sendMessage(opt);
+                                        }
+                                    }}
+                                    onEnquire={(name) => {
+                                        setMessages(prev => [...prev, { id: 'form-' + Date.now(), type: 'form', projectName: name }]);
+                                    }}
+                                />
                             )}
 
-                            {msg.followUp && msg.type === 'form-success' && (
+                            {msg.followUp && (!msg.projectCards || msg.projectCards.length === 0) && (
                                 <div className={`${styles.message} ${styles.botMessage}`}>
                                     {msg.followUp}
                                 </div>
@@ -192,7 +204,7 @@ export default function Chatbot() {
                                 />
                             )}
 
-                            {msg.options && msg.options.length > 0 && (
+                            {msg.options && msg.options.length > 0 && (!msg.projectCards || msg.projectCards.length === 0) && (
                                 <div className={styles.chatOptions}>
                                     {msg.options.map((opt, i) => (
                                         <button
@@ -244,7 +256,7 @@ export default function Chatbot() {
     );
 }
 
-function ProjectSlider({ cards, onEnquire }) {
+function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick }) {
     const sliderRef = useRef(null);
     const [showArrow, setShowArrow] = useState(false);
 
@@ -298,6 +310,26 @@ function ProjectSlider({ cards, onEnquire }) {
             >
                 &#8594;
             </button>
+
+            {followUp && (
+                <div className={`${styles.message} ${styles.botMessage}`} style={{ marginTop: '12px', marginLeft: '0' }}>
+                    {followUp}
+                </div>
+            )}
+
+            {options && options.length > 0 && (
+                <div className={styles.chatOptions} style={{ marginLeft: '0', marginTop: '8px' }}>
+                    {options.map((opt, i) => (
+                        <button
+                            key={i}
+                            className={styles.optionBtn}
+                            onClick={() => onOptionClick(opt)}
+                        >
+                            {opt}
+                        </button>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
