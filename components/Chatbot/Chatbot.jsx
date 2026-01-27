@@ -175,10 +175,11 @@ export default function Chatbot() {
                             {msg.projectCards && msg.projectCards.length > 0 && (
                                 <ProjectSlider
                                     cards={msg.projectCards}
-                                    followUp={msg.followUp}
+                                    followUp={msg.followUp || "Would you like to see more projects?"}
                                     options={msg.options}
                                     onOptionClick={(opt) => {
-                                        if (opt.toLowerCase() === 'yes') {
+                                        const lowOpt = opt.toLowerCase();
+                                        if (lowOpt === 'yes' || lowOpt === 'yes, please' || lowOpt === 'sure') {
                                             window.location.href = "https://mypropertyfact.in/projects?propertyType=2&propertyLocation=2&budget=Up+to+1Cr";
                                         } else {
                                             sendMessage(opt);
@@ -311,14 +312,28 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick }) {
                 &#8594;
             </button>
 
-            {followUp && (
-                <div className={`${styles.message} ${styles.botMessage}`} style={{ marginTop: '12px', marginLeft: '0' }}>
-                    {followUp}
+            {(followUp || (cards && cards.length > 0)) && (
+                <div
+                    className={`${styles.message} ${styles.botMessage}`}
+                    style={{
+                        marginTop: '16px',
+                        marginLeft: '0',
+                        alignSelf: 'flex-start',
+                        display: 'inline-block',
+                        width: 'auto',
+                        boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                        backgroundColor: '#ffffff',
+                        padding: '10px 14px',
+                        borderRadius: '12px',
+                        fontSize: '0.95rem'
+                    }}
+                >
+                    {followUp || "Would you like to see more projects?"}
                 </div>
             )}
 
             {options && options.length > 0 && (
-                <div className={styles.chatOptions} style={{ marginLeft: '0', marginTop: '8px' }}>
+                <div className={styles.chatOptions} style={{ marginLeft: '0', marginTop: '8px', display: 'flex' }}>
                     {options.map((opt, i) => (
                         <button
                             key={i}
