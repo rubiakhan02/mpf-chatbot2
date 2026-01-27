@@ -382,10 +382,19 @@ async function generateAIResponse(message, sessionId) {
                 const cityId = CITY_MAP[session.data.city] || 2;
                 const apiBudget = session.data.budget;
 
-                const redirectParam = `propertyType=${typeId}&propertyLocation=${cityId}&budget=${encodeURIComponent(apiBudget)}`;
+                // Mapping budget back to display string for the website URL
+                const budgetDisplayMap = {
+                    '0-10000000': 'Up to 1Cr',
+                    '10000000-30000000': '1Cr – 3Cr',
+                    '30000000-50000000': '3Cr – 5Cr',
+                    '50000000-500000000': 'Above 5Cr'
+                };
+                const displayBudget = budgetDisplayMap[apiBudget] || apiBudget;
 
-                // Redirect with filters
-                const targetUrl = `https://mypropertyfact.in/projects/search-by-type-city-budget?${redirectParam}`;
+                const redirectParam = `propertyType=${typeId}&propertyLocation=${cityId}&budget=${encodeURIComponent(displayBudget)}`;
+
+                // Redirect to the verified listing page
+                const targetUrl = `https://mypropertyfact.in/projects?${redirectParam}`;
 
                 return {
                     reply: `Redirecting you to view more projects on our website...`,
@@ -396,7 +405,7 @@ async function generateAIResponse(message, sessionId) {
             if (['no', 'no, thanks'].includes(msg)) {
                 return {
                     reply: `Thank you for your time!\nHave a great day 😊`,
-                    options: []
+                    options: ['Restart']
                 };
             }
 
@@ -526,8 +535,7 @@ const server = http.createServer(async (req, res) => {
                         res.end(JSON.stringify({
                             success: true, // Only true if External API confirmed
                             reply: `Thank you for sharing your details!\nOur consultant will contact you within 24 hours.`,
-                            followUp: `Would you like to explore more projects?`,
-                            options: ['Yes', 'No']
+                            options: ['Restart']
                         }));
                     } else {
                         // External API returned 200 OK but said "Success: 0" or similar
