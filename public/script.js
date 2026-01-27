@@ -219,7 +219,18 @@ document.addEventListener('DOMContentLoaded', () => {
         formDiv.innerHTML = `
             <div class="form-title">Please share your details for<br><strong>${projectName}</strong></div>
             <input type="text" id="leadName" class="form-input" placeholder="Full Name *">
-            <input type="tel" id="leadMobile" class="form-input" placeholder="Mobile Number (10 digits) *" maxlength="10">
+            <input 
+  type="tel"
+  id="leadMobile"
+  class="form-input"
+  placeholder="Mobile Number (10 digits) *"
+  maxlength="10"
+  pattern="[6-9][0-9]{9}"
+  required
+  oninvalid="this.setCustomValidity('Please enter a valid 10-digit Indian mobile number')"
+  oninput="this.setCustomValidity('')"
+>
+
             <input type="email" id="leadEmail" class="form-input" placeholder="Email ID *">
             <button id="submitLead" class="submit-btn">Submit</button>
             <div id="formError" class="form-error"></div>
@@ -240,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Validation
             if (!name) { errorDiv.textContent = 'Please enter your name.'; return; }
-            if (!/^\d{10}$/.test(mobile)) { errorDiv.textContent = 'Please enter a valid 10-digit mobile number.'; return; }
+            if (!/^[6-9]\d{9}$/.test(mobile)) { errorDiv.textContent = 'Please enter a valid 10-digit mobile number.'; return; }
             if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errorDiv.textContent = 'Please enter a valid email address.'; return; }
 
             errorDiv.textContent = '';
