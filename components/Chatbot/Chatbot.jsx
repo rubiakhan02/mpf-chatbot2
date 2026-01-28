@@ -76,25 +76,28 @@ export default function Chatbot() {
 
         const lowText = userText.toLowerCase().trim();
 
-        // Trace current selections
+        // 1. Detect Category & Update Selections (with state clearing for subsequent steps)
         let currentType = selections.type;
         let currentCity = selections.city;
         let currentCityId = selections.cityId;
         let currentBudget = selections.budget;
 
-        // Flow Continuation Detection (Global category detection to support re-selection at any step)
         const isType = ['commercial', 'residential', 'new launch'].includes(lowText);
-        const isCity = cities.some(c => (c.cityName || c.name || "").toLowerCase() === lowText) || ['noida', 'gurugram', 'ghaziabad', 'delhi', 'other'].includes(lowText);
+        const isCity = cities.some(c => (c.cityName || c.name || "").toLowerCase() === lowText) || ['noida', 'gurugram', 'ghaziabad', 'delhi', 'greater noida', 'faridabad', 'other'].includes(lowText);
         const isBudget = lowText.includes('cr') || lowText.includes('crore');
 
         if (isType) {
             currentType = lowText;
-            setSelections(prev => ({ ...prev, type: lowText }));
+            currentCity = null;
+            currentCityId = null;
+            currentBudget = null;
+            setSelections({ type: lowText, city: null, cityId: null, budget: null });
         } else if (isCity) {
             currentCity = lowText;
             const matched = cities.find(c => (c.cityName || c.name || "").toLowerCase() === lowText);
             currentCityId = matched ? (matched.id || matched.cityId) : 2;
-            setSelections(prev => ({ ...prev, city: lowText, cityId: currentCityId }));
+            currentBudget = null;
+            setSelections(prev => ({ ...prev, city: lowText, cityId: currentCityId, budget: null }));
         } else if (isBudget) {
             currentBudget = lowText;
             setSelections(prev => ({ ...prev, budget: lowText }));
@@ -119,6 +122,7 @@ export default function Chatbot() {
             return;
         }
 
+        // Add user message to UI
         addMessage(userText, 'user');
         setInputValue('');
         setIsInputDisabled(false);
@@ -134,7 +138,8 @@ export default function Chatbot() {
             let data = await response.json();
             setIsTyping(false);
 
-            // Project Fetching and Filtering Logic (Triggered on Budget selection or re-selection)
+            // Project Fetching and Strict Filtering (Priority: Latest selections)
+            // Triggered if backend returns projectCards OR if user re-selected a Budget
             if (data.projectCards || isBudget) {
                 const targetType = (currentType || "").includes('commercial') ? 2 : 1;
                 const targetCityLow = (currentCity || "").toLowerCase().trim();
@@ -147,19 +152,22 @@ export default function Chatbot() {
                 else if (targetBudgetLow.includes("3") && targetBudgetLow.includes("5") && targetBudgetLow.includes("cr")) budgetParam = "3-5+Cr*";
                 else if (targetBudgetLow.includes("above") && targetBudgetLow.includes("5 cr")) budgetParam = "Above+5+Cr";
 
-                if (budgetParam) {
+                if (budgetParam && targetCityLow) {
                     const budgetApiUrl = `https://apis.mypropertyfact.in/projects/search-by-type-city-budget?propertyType=${targetType}&propertyLocation=${targetCityId}&budget=${budgetParam}`;
+
                     try {
                         const bRes = await fetch(budgetApiUrl);
                         const results = await bRes.json();
 
-                        // Strict Filtering
+                        // Strict Filtering by Type and City
                         const filtered = (results || []).filter(p => {
                             const pType = p.propertyTypeId || p.property_type_id || (p.propertyTypeName?.toLowerCase().includes('comm') ? 2 : 1);
                             const pCityName = (p.cityName || p.city_name || "").toLowerCase();
                             const pAddress = (p.projectAddress || "").toLowerCase();
+
                             const matchesType = pType == targetType;
                             const matchesCity = pCityName.includes(targetCityLow) || targetCityLow.includes(pCityName) || pAddress.includes(targetCityLow);
+
                             return matchesType && matchesCity;
                         });
 
@@ -203,6 +211,7 @@ export default function Chatbot() {
                 setIsInputDisabled(false);
                 setPlaceholder("Type a message...");
             }
+
         } catch (error) {
             console.error(error);
             setIsTyping(false);
@@ -218,12 +227,14 @@ export default function Chatbot() {
 
     return (
         <>
+            {/* Launcher button */}
             <button className={styles.launcher} onClick={toggleChat} aria-label="Open Chatbot">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2-2z"></path>
                 </svg>
             </button>
 
+            {/* Chat Container */}
             <div className={`${styles.container} ${!isOpen ? styles.hidden : ''}`}>
                 <div className={styles.header}>
                     <div className={styles.headerInfo}>
