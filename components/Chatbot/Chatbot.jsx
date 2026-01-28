@@ -76,39 +76,28 @@ export default function Chatbot() {
 
         const lowText = userText.toLowerCase().trim();
 
-        // Trace current selections in local vars to avoid stale state in immediate API calls
+        // Trace current selections
         let currentType = selections.type;
         let currentCity = selections.city;
         let currentCityId = selections.cityId;
         let currentBudget = selections.budget;
 
-        // Trace which step we are answering based on the last bot options
-        const lastMsg = messages[messages.length - 1];
-        if (lastMsg && lastMsg.options) {
-            const lowOpts = lastMsg.options.map(o => o.toLowerCase());
+        // Flow Continuation Detection (Global category detection to support re-selection at any step)
+        const isType = ['commercial', 'residential', 'new launch'].includes(lowText);
+        const isCity = cities.some(c => (c.cityName || c.name || "").toLowerCase() === lowText) || ['noida', 'gurugram', 'ghaziabad', 'delhi', 'other'].includes(lowText);
+        const isBudget = lowText.includes('cr') || lowText.includes('crore');
 
-            // 1. Property Type Step
-            if (lowOpts.includes('commercial') || lowOpts.includes('residential') || lowOpts.includes('new launch')) {
-                currentType = lowText;
-                setSelections(prev => ({ ...prev, type: lowText }));
-            }
-            // 2. City Step
-            else if (lowOpts.some(o => ['noida', 'gurugram', 'ghaziabad', 'delhi', 'other'].includes(o)) || (cities.length > 0 && lowOpts.some(opt => cities.some(c => (c.cityName || c.name || "").toLowerCase() === opt)))) {
-                currentCity = lowText;
-                const matched = cities.find(c => (c.cityName || c.name || "").toLowerCase() === lowText);
-                currentCityId = matched ? (matched.id || matched.cityId) : 2; // Default to Noida
-                setSelections(prev => ({ ...prev, city: lowText, cityId: currentCityId }));
-            }
-            // 3. Budget Step
-            else if (lowOpts.some(o => o.includes('cr'))) {
-                currentBudget = lowText;
-                setSelections(prev => ({ ...prev, budget: lowText }));
-            }
-        } else if (lastMsg && lastMsg.text && lastMsg.text.toLowerCase().includes("preferred city")) {
+        if (isType) {
+            currentType = lowText;
+            setSelections(prev => ({ ...prev, type: lowText }));
+        } else if (isCity) {
             currentCity = lowText;
             const matched = cities.find(c => (c.cityName || c.name || "").toLowerCase() === lowText);
             currentCityId = matched ? (matched.id || matched.cityId) : 2;
             setSelections(prev => ({ ...prev, city: lowText, cityId: currentCityId }));
+        } else if (isBudget) {
+            currentBudget = lowText;
+            setSelections(prev => ({ ...prev, budget: lowText }));
         }
 
         // Reset/Restart Logic
@@ -145,8 +134,8 @@ export default function Chatbot() {
             let data = await response.json();
             setIsTyping(false);
 
-            // Trigger Project Fetching after Budget Selection
-            if (data.projectCards) {
+            // Project Fetching and Filtering Logic (Triggered on Budget selection or re-selection)
+            if (data.projectCards || isBudget) {
                 const targetType = (currentType || "").includes('commercial') ? 2 : 1;
                 const targetCityLow = (currentCity || "").toLowerCase().trim();
                 const targetBudgetLow = (currentBudget || "").toLowerCase().trim();
@@ -164,15 +153,13 @@ export default function Chatbot() {
                         const bRes = await fetch(budgetApiUrl);
                         const results = await bRes.json();
 
-                        // Strict Filtering: All 3 conditions must match
+                        // Strict Filtering
                         const filtered = (results || []).filter(p => {
                             const pType = p.propertyTypeId || p.property_type_id || (p.propertyTypeName?.toLowerCase().includes('comm') ? 2 : 1);
                             const pCityName = (p.cityName || p.city_name || "").toLowerCase();
                             const pAddress = (p.projectAddress || "").toLowerCase();
-
                             const matchesType = pType == targetType;
                             const matchesCity = pCityName.includes(targetCityLow) || targetCityLow.includes(pCityName) || pAddress.includes(targetCityLow);
-
                             return matchesType && matchesCity;
                         });
 
@@ -191,7 +178,6 @@ export default function Chatbot() {
                                 };
                             });
                         } else {
-                            // No projects matching strict preferences
                             data.projectCards = [];
                             data.reply = "Currently, we do not have any projects matching your preferences.";
                             data.options = ['Restart'];
