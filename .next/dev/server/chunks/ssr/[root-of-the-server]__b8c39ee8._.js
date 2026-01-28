@@ -73,29 +73,38 @@ function ProjectsListing() {
     const budget = searchParams.get('budget') || '';
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useEffect"])(()=>{
         const fetchProjects = async ()=>{
-            if (!type || !budget) {
+            if (!type) {
                 setLoading(false);
                 return;
             }
+            // Normalizing Budget String for Robust Mapping
             let budgetParam = "";
-            const b = budget.toLowerCase();
-            if (b.includes("up to") && b.includes("1 cr")) budgetParam = "Up+to+1Cr*";
-            else if (b.includes("1") && b.includes("3") && b.includes("cr")) budgetParam = "1-3+Cr*";
-            else if (b.includes("3") && b.includes("5") && b.includes("cr")) budgetParam = "3-5+Cr*";
-            else if (b.includes("above") && b.includes("5 cr")) budgetParam = "Above+5+Cr";
+            const b = (budget || "").toLowerCase().trim();
+            if (b.includes("up to") && b.includes("1")) {
+                budgetParam = "Up+to+1Cr*";
+            } else if (b.includes("1") && b.includes("3")) {
+                budgetParam = "1-3+Cr*";
+            } else if (b.includes("3") && b.includes("5")) {
+                budgetParam = "3-5+Cr*";
+            } else if (b.includes("above") && b.includes("5")) {
+                budgetParam = "Above+5+Cr";
+            } else {
+                // Default fallback if budget is empty or unparseable
+                budgetParam = "Up+to+1Cr*";
+            }
             const apiUrl = `https://apis.mypropertyfact.in/projects/search-by-type-city-budget?propertyType=${type}&propertyLocation=${cityId}&budget=${budgetParam}`;
             try {
                 const res = await fetch(apiUrl);
                 const results = await res.json();
                 // Strict Filtering Logic (Matching the Chatbot)
                 const targetType = parseInt(type);
-                const targetCityLow = cityName.toLowerCase().trim();
+                const targetCityLow = (cityName || "").toLowerCase().trim();
                 const filtered = (results || []).filter((p)=>{
                     const pType = p.propertyTypeId || p.property_type_id || (p.propertyTypeName?.toLowerCase().includes('comm') ? 2 : 1);
                     const pCityName = (p.cityName || p.city_name || "").toLowerCase();
                     const pAddress = (p.projectAddress || "").toLowerCase();
                     const matchesType = pType == targetType;
-                    const matchesCity = pCityName.includes(targetCityLow) || targetCityLow.includes(pCityName) || pAddress.includes(targetCityLow);
+                    const matchesCity = targetCityLow === "" || pCityName.includes(targetCityLow) || targetCityLow.includes(pCityName) || pAddress.includes(targetCityLow);
                     return matchesType && matchesCity;
                 });
                 setProjects(filtered);
@@ -117,7 +126,7 @@ function ProjectsListing() {
         children: "Loading projects..."
     }, void 0, false, {
         fileName: "[project]/app/projects/page.js",
-        lineNumber: 65,
+        lineNumber: 75,
         columnNumber: 25
     }, this);
     if (projects.length === 0) {
@@ -128,7 +137,7 @@ function ProjectsListing() {
                     children: "Currently, we do not have any projects matching your preferences."
                 }, void 0, false, {
                     fileName: "[project]/app/projects/page.js",
-                    lineNumber: 70,
+                    lineNumber: 80,
                     columnNumber: 17
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("a", {
@@ -137,13 +146,13 @@ function ProjectsListing() {
                     children: "Back to Home"
                 }, void 0, false, {
                     fileName: "[project]/app/projects/page.js",
-                    lineNumber: 71,
+                    lineNumber: 81,
                     columnNumber: 17
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/projects/page.js",
-            lineNumber: 69,
+            lineNumber: 79,
             columnNumber: 13
         }, this);
     }
@@ -157,25 +166,25 @@ function ProjectsListing() {
                         children: "Projects for you"
                     }, void 0, false, {
                         fileName: "[project]/app/projects/page.js",
-                        lineNumber: 79,
+                        lineNumber: 89,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                         children: [
                             "Showing projects in ",
-                            cityName,
-                            " matching your budget: ",
-                            budget
+                            cityName || 'selected location',
+                            " matching your ",
+                            budget ? `budget: ${budget}` : 'preferences'
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/projects/page.js",
-                        lineNumber: 80,
+                        lineNumber: 90,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/app/projects/page.js",
-                lineNumber: 78,
+                lineNumber: 88,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -193,7 +202,7 @@ function ProjectsListing() {
                                 onError: (e)=>e.target.src = 'https://via.placeholder.com/300x200?text=No+Image'
                             }, void 0, false, {
                                 fileName: "[project]/app/projects/page.js",
-                                lineNumber: 90,
+                                lineNumber: 100,
                                 columnNumber: 29
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -203,7 +212,7 @@ function ProjectsListing() {
                                         children: p.projectName
                                     }, void 0, false, {
                                         fileName: "[project]/app/projects/page.js",
-                                        lineNumber: 92,
+                                        lineNumber: 102,
                                         columnNumber: 33
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -214,7 +223,7 @@ function ProjectsListing() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/projects/page.js",
-                                        lineNumber: 93,
+                                        lineNumber: 103,
                                         columnNumber: 33
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -225,7 +234,7 @@ function ProjectsListing() {
                                                 children: p.projectStartingPrice || 'Price on Request'
                                             }, void 0, false, {
                                                 fileName: "[project]/app/projects/page.js",
-                                                lineNumber: 95,
+                                                lineNumber: 105,
                                                 columnNumber: 37
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -233,13 +242,13 @@ function ProjectsListing() {
                                                 children: p.projectStatusName
                                             }, void 0, false, {
                                                 fileName: "[project]/app/projects/page.js",
-                                                lineNumber: 96,
+                                                lineNumber: 106,
                                                 columnNumber: 37
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/projects/page.js",
-                                        lineNumber: 94,
+                                        lineNumber: 104,
                                         columnNumber: 33
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -250,7 +259,7 @@ function ProjectsListing() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/projects/page.js",
-                                        lineNumber: 98,
+                                        lineNumber: 108,
                                         columnNumber: 33
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -263,7 +272,7 @@ function ProjectsListing() {
                                                 children: "View Details"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/projects/page.js",
-                                                lineNumber: 100,
+                                                lineNumber: 110,
                                                 columnNumber: 37
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -271,37 +280,37 @@ function ProjectsListing() {
                                                 children: "Enquire"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/projects/page.js",
-                                                lineNumber: 101,
+                                                lineNumber: 111,
                                                 columnNumber: 37
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/projects/page.js",
-                                        lineNumber: 99,
+                                        lineNumber: 109,
                                         columnNumber: 33
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/projects/page.js",
-                                lineNumber: 91,
+                                lineNumber: 101,
                                 columnNumber: 29
                             }, this)
                         ]
                     }, i, true, {
                         fileName: "[project]/app/projects/page.js",
-                        lineNumber: 89,
+                        lineNumber: 99,
                         columnNumber: 25
                     }, this);
                 })
             }, void 0, false, {
                 fileName: "[project]/app/projects/page.js",
-                lineNumber: 83,
+                lineNumber: 93,
                 columnNumber: 13
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/projects/page.js",
-        lineNumber: 77,
+        lineNumber: 87,
         columnNumber: 9
     }, this);
 }

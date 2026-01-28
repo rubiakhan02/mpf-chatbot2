@@ -23,7 +23,7 @@ export default function Chatbot() {
     useEffect(() => {
         const fetchCities = async () => {
             try {
-                const res = await fetch('https://apis.mypropertyfact.in/city/all');
+                const res = await fetch('/api/cities');
                 const data = await res.json();
                 setCities(data || []);
             } catch (err) {
@@ -71,10 +71,18 @@ export default function Chatbot() {
     };
 
     const sendMessage = async (text = null) => {
-        const userText = text || inputValue.trim();
+        let userText = text || inputValue.trim();
         if (!userText) return;
 
         const lowText = userText.toLowerCase().trim();
+
+        // Handle "Yes" for the "change the filter" prompt
+        if (lowText === 'yes' && messages.length > 0) {
+            const lastBotMsg = [...messages].reverse().find(m => m.type === 'bot');
+            if (lastBotMsg && lastBotMsg.followUp === "Would you like to change the filter?") {
+                userText = 'Restart';
+            }
+        }
 
         // 1. Detect Category & Update Selections (with state clearing for subsequent steps)
         let currentType = selections.type;
@@ -84,7 +92,12 @@ export default function Chatbot() {
 
         const isType = ['commercial', 'residential', 'new launch'].includes(lowText);
         const isCity = cities.some(c => (c.cityName || c.name || "").toLowerCase() === lowText) || ['noida', 'gurugram', 'ghaziabad', 'delhi', 'greater noida', 'faridabad', 'other'].includes(lowText);
-        const isBudget = lowText.includes('cr') || lowText.includes('crore');
+
+        const isBudget =
+            lowText.includes('upto 1') ||
+            lowText.includes('1-3') ||
+            lowText.includes('3-5') ||
+            lowText.includes('above 5');
 
         if (isType) {
             currentType = lowText;
@@ -95,7 +108,7 @@ export default function Chatbot() {
         } else if (isCity) {
             currentCity = lowText;
             const matched = cities.find(c => (c.cityName || c.name || "").toLowerCase() === lowText);
-            currentCityId = matched ? (matched.id || matched.cityId) : 2;
+            currentCityId = matched ? (matched.id || matched.cityId) : null;
             currentBudget = null;
             setSelections(prev => ({ ...prev, city: lowText, cityId: currentCityId, budget: null }));
         } else if (isBudget) {
@@ -123,7 +136,7 @@ export default function Chatbot() {
         }
 
         // Add user message to UI
-        addMessage(userText, 'user');
+        addMessage(userText === 'Restart' ? (text || userText) : userText, 'user');
         setInputValue('');
         setIsInputDisabled(false);
         setPlaceholder("Type a message...");
@@ -138,21 +151,29 @@ export default function Chatbot() {
             let data = await response.json();
             setIsTyping(false);
 
+            // Handle invalid city immediately (bypass for "Other" to allow manual typing)
+            if (isCity && !currentCityId && lowText !== 'other') {
+                data.reply = "Currently, we do not have any projects in this city.";
+                data.options = ['Restart'];
+                data.projectCards = [];
+                data.followUp = null;
+            }
+
             // Project Fetching and Strict Filtering (Priority: Latest selections)
-            // Triggered if backend returns projectCards OR if user re-selected a Budget
             if (data.projectCards || isBudget) {
                 const targetType = (currentType || "").includes('commercial') ? 2 : 1;
                 const targetCityLow = (currentCity || "").toLowerCase().trim();
                 const targetBudgetLow = (currentBudget || "").toLowerCase().trim();
-                const targetCityId = currentCityId || 2;
+                const targetCityId = currentCityId;
 
                 let budgetParam = "";
-                if (targetBudgetLow.includes("up to") && targetBudgetLow.includes("1 cr")) budgetParam = "Up+to+1Cr*";
-                else if (targetBudgetLow.includes("1") && targetBudgetLow.includes("3") && targetBudgetLow.includes("cr")) budgetParam = "1-3+Cr*";
-                else if (targetBudgetLow.includes("3") && targetBudgetLow.includes("5") && targetBudgetLow.includes("cr")) budgetParam = "3-5+Cr*";
-                else if (targetBudgetLow.includes("above") && targetBudgetLow.includes("5 cr")) budgetParam = "Above+5+Cr";
+                if (targetBudgetLow.includes("up to")) budgetParam = "Up+to+1Cr*";
+                else if (targetBudgetLow.includes("1-3")) budgetParam = "1-3+Cr*";
+                else if (targetBudgetLow.includes("3-5")) budgetParam = "3-5+Cr*";
+                else if (targetBudgetLow.includes("above")) budgetParam = "Above+5+Cr";
 
-                if (budgetParam && targetCityLow) {
+
+                if (budgetParam && targetCityLow && targetCityId) {
                     const budgetApiUrl = `https://apis.mypropertyfact.in/projects/search-by-type-city-budget?propertyType=${targetType}&propertyLocation=${targetCityId}&budget=${budgetParam}`;
 
                     try {
@@ -166,7 +187,15 @@ export default function Chatbot() {
                             const pAddress = (p.projectAddress || "").toLowerCase();
 
                             const matchesType = pType == targetType;
-                            const matchesCity = pCityName.includes(targetCityLow) || targetCityLow.includes(pCityName) || pAddress.includes(targetCityLow);
+                            // Strict City Match: Prevent "Noida" from matching "Greater Noida" / "Noida Extension"
+                            const pAddressLow = pAddress.toLowerCase();
+                            let matchesCity = pCityName === targetCityLow || pAddressLow.includes(targetCityLow);
+
+                            if (targetCityLow === 'noida') {
+                                if (pAddressLow.includes('greater noida') || pAddressLow.includes('noida extension') || pCityName.includes('greater') || pCityName.includes('extension')) {
+                                    matchesCity = false;
+                                }
+                            }
 
                             return matchesType && matchesCity;
                         });
@@ -185,15 +214,20 @@ export default function Chatbot() {
                                     link: `https://mypropertyfact.in/${slug}`
                                 };
                             });
+                     
                         } else {
                             data.projectCards = [];
-                            data.reply = "Currently, we do not have any projects matching your preferences.";
-                            data.options = ['Restart'];
-                            data.followUp = null;
+                            data.reply = "Currently, we don’t have any projects matching your requirement.";
+                            data.followUp = "Would you like to change the filter?";
+                            data.options = ['Yes', 'No'];
                         }
                     } catch (err) {
                         console.error("Project Fetch Error:", err);
                     }
+                } else if (budgetParam && targetCityLow && !targetCityId) {
+                    data.projectCards = [];
+                    data.reply = "Currently, we do not have any projects in this city.";
+                    data.options = ['Restart'];
                 }
             }
 
@@ -227,14 +261,12 @@ export default function Chatbot() {
 
     return (
         <>
-            {/* Launcher button */}
             <button className={styles.launcher} onClick={toggleChat} aria-label="Open Chatbot">
                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2-2z"></path>
                 </svg>
             </button>
 
-            {/* Chat Container */}
             <div className={`${styles.container} ${!isOpen ? styles.hidden : ''}`}>
                 <div className={styles.header}>
                     <div className={styles.headerInfo}>
@@ -270,10 +302,10 @@ export default function Chatbot() {
                                         const lowOpt = opt.toLowerCase();
                                         if (['yes', 'yes, please', 'sure', 'yes, explore more'].includes(lowOpt)) {
                                             const type = (selections.type || "").includes('commercial') ? 2 : 1;
-                                            const cityId = selections.cityId || 2;
-                                            const city = (selections.city || "noida");
+                                            const cityId = selections.cityId;
+                                            const city = encodeURIComponent(selections.city || "");
                                             const budget = encodeURIComponent(selections.budget || "");
-                                            window.location.href = `/projects?type=${type}&cityId=${cityId}&cityName=${city}&budget=${budget}`;
+                                            window.location.href = `/projects?type=${type}&cityId=${cityId || ''}&cityName=${city}&budget=${budget}`;
                                         } else {
                                             sendMessage(opt);
                                         }
@@ -297,7 +329,7 @@ export default function Chatbot() {
                                     {(msg.options || []).map((opt, i) => (
                                         <button key={i} className={styles.optionBtn} onClick={() => sendMessage(opt)}>{opt}</button>
                                     ))}
-                                    {(msg.type === 'bot' && (msg.text.includes("Have a great day") || msg.text.includes("matching your preferences"))) && !msg.options?.includes('Restart') && (
+                                    {(msg.type === 'bot' && (msg.text.includes("Have a great day") || msg.text.includes("matching your requirement") || msg.text.includes("in this city"))) && !msg.options?.includes('Restart') && (
                                         <button className={styles.optionBtn} onClick={() => sendMessage('Restart')}>Restart</button>
                                     )}
                                 </div>

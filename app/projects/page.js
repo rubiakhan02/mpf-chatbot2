@@ -18,17 +18,27 @@ export default function ProjectsListing() {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            if (!type || !budget) {
+            if (!type) {
                 setLoading(false);
                 return;
             }
 
+            // Normalizing Budget String for Robust Mapping
             let budgetParam = "";
-            const b = budget.toLowerCase();
-            if (b.includes("up to") && b.includes("1 cr")) budgetParam = "Up+to+1Cr*";
-            else if (b.includes("1") && b.includes("3") && b.includes("cr")) budgetParam = "1-3+Cr*";
-            else if (b.includes("3") && b.includes("5") && b.includes("cr")) budgetParam = "3-5+Cr*";
-            else if (b.includes("above") && b.includes("5 cr")) budgetParam = "Above+5+Cr";
+            const b = (budget || "").toLowerCase().trim();
+
+            if (b.includes("up to") && b.includes("1")) {
+                budgetParam = "Up+to+1Cr*";
+            } else if (b.includes("1") && b.includes("3")) {
+                budgetParam = "1-3+Cr*";
+            } else if (b.includes("3") && b.includes("5")) {
+                budgetParam = "3-5+Cr*";
+            } else if (b.includes("above") && b.includes("5")) {
+                budgetParam = "Above+5+Cr";
+            } else {
+                // Default fallback if budget is empty or unparseable
+                budgetParam = "Up+to+1Cr*";
+            }
 
             const apiUrl = `https://apis.mypropertyfact.in/projects/search-by-type-city-budget?propertyType=${type}&propertyLocation=${cityId}&budget=${budgetParam}`;
 
@@ -38,7 +48,7 @@ export default function ProjectsListing() {
 
                 // Strict Filtering Logic (Matching the Chatbot)
                 const targetType = parseInt(type);
-                const targetCityLow = cityName.toLowerCase().trim();
+                const targetCityLow = (cityName || "").toLowerCase().trim();
 
                 const filtered = (results || []).filter(p => {
                     const pType = p.propertyTypeId || p.property_type_id || (p.propertyTypeName?.toLowerCase().includes('comm') ? 2 : 1);
@@ -46,7 +56,7 @@ export default function ProjectsListing() {
                     const pAddress = (p.projectAddress || "").toLowerCase();
 
                     const matchesType = pType == targetType;
-                    const matchesCity = pCityName.includes(targetCityLow) || targetCityLow.includes(pCityName) || pAddress.includes(targetCityLow);
+                    const matchesCity = targetCityLow === "" || pCityName.includes(targetCityLow) || targetCityLow.includes(pCityName) || pAddress.includes(targetCityLow);
 
                     return matchesType && matchesCity;
                 });
@@ -77,7 +87,7 @@ export default function ProjectsListing() {
         <div className={styles.container}>
             <header className={styles.header}>
                 <h1>Projects for you</h1>
-                <p>Showing projects in {cityName} matching your budget: {budget}</p>
+                <p>Showing projects in {cityName || 'selected location'} matching your {budget ? `budget: ${budget}` : 'preferences'}</p>
             </header>
 
             <div className={styles.grid}>

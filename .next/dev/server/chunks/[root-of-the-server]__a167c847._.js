@@ -140,8 +140,7 @@ const CITY_MAP = {
     'lucknow': 31,
     'chandigarh': 33,
     'goa': 41,
-    'delhi': 2,
-    'pune': 14,
+    'delhi': 30,
     'faridabad': 35
 };
 const CITY_ALIASES = {
@@ -155,7 +154,7 @@ const CITY_ALIASES = {
     'gr noida': 'greater noida',
     'gzb': 'ghaziabad'
 };
-const ALLOWED_CITIES = Object.keys(CITY_MAP);
+const ALLOWED_CITIES = Object.keys(CITY_MAP).sort((a, b)=>b.length - a.length);
 const STATES = {
     WELCOME: 'WELCOME',
     TYPE_SELECTED: 'TYPE',
@@ -335,7 +334,10 @@ async function generateAIResponse(message, sessionId) {
                 }
             }
             if (session.flags && session.flags.waitingForCity) {
-                const matched = ALLOWED_CITIES.find((c)=>inputCity.includes(c));
+                const matched = ALLOWED_CITIES.find((c)=>{
+                    const regex = new RegExp(`\\b${c}\\b`, 'i');
+                    return regex.test(inputCity);
+                });
                 let fuzzyMatch = null;
                 if (!matched) {
                     for (const city of ALLOWED_CITIES){
@@ -400,7 +402,10 @@ async function generateAIResponse(message, sessionId) {
                     };
                 }
             }
-            let matchedCity = ALLOWED_CITIES.find((c)=>inputCity.includes(c));
+            let matchedCity = ALLOWED_CITIES.find((c)=>{
+                const regex = new RegExp(`\\b${c}\\b`, 'i');
+                return regex.test(inputCity);
+            });
             if (matchedCity) {
                 session.data.city = matchedCity;
                 session.step = STATES.CITY_SELECTED;
@@ -465,7 +470,15 @@ async function generateAIResponse(message, sessionId) {
             session.step = STATES.RESULTS;
             try {
                 const typeId = PROPERTY_TYPE_MAP[session.data.type] || 1;
-                const cityId = CITY_MAP[session.data.city] || 2;
+                const cityId = CITY_MAP[session.data.city];
+                if (!cityId) {
+                    return {
+                        reply: `Currently, we don’t have any projects in ${session.data.city || 'this location'}.`,
+                        options: [
+                            'Restart'
+                        ]
+                    };
+                }
                 const response = await axios.get(API_URL, {
                     params: {
                         propertyType: typeId,
@@ -537,9 +550,9 @@ async function generateAIResponse(message, sessionId) {
                 'sure'
             ].includes(msg)) {
                 const typeId = PROPERTY_TYPE_MAP[session.data.type] || 1;
-                const cityId = CITY_MAP[session.data.city] || 2;
+                const cityId = CITY_MAP[session.data.city];
                 const apiBudget = session.data.budget;
-                const redirectParam = `propertyType=${typeId}&propertyLocation=${cityId}&budget=${encodeURIComponent(apiBudget)}`;
+                const redirectParam = `propertyType=${typeId}&cityId=${cityId || ''}&budget=${encodeURIComponent(apiBudget)}`;
                 const targetUrl = `https://mypropertyfact.in/`;
                 return {
                     reply: `Redirecting you to view more projects on our website...`,
