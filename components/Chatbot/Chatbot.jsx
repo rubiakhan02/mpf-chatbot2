@@ -179,7 +179,7 @@ export default function Chatbot() {
                 </div>
 
                 <div className={styles.messages}>
-                    {messages.map((msg) => (
+                    {messages.map((msg, index) => (
                         <React.Fragment key={msg.id}>
                             <div className={`${styles.message} ${msg.type === 'user' ? styles.userMessage : styles.botMessage}`}>
                                 {msg.text.split('\n').map((line, i) => <div key={i}>{line}</div>)}
@@ -190,6 +190,7 @@ export default function Chatbot() {
                                     cards={msg.projectCards}
                                     followUp={msg.followUp || "Would you like to see more projects?"}
                                     options={msg.options}
+                                    disabled={index !== messages.length - 1}
                                     onOptionClick={(opt) => {
                                         const lowOpt = opt.toLowerCase();
                                         if (lowOpt === 'yes' || lowOpt === 'yes, please' || lowOpt === 'sure') {
@@ -226,6 +227,7 @@ export default function Chatbot() {
                                             key={i}
                                             className={styles.optionBtn}
                                             onClick={() => sendMessage(opt)}
+                                            disabled={index !== messages.length - 1}
                                         >
                                             {opt}
                                         </button>
@@ -271,7 +273,7 @@ export default function Chatbot() {
     );
 }
 
-function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick }) {
+function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, disabled }) {
     const sliderRef = useRef(null);
     const [showArrow, setShowArrow] = useState(false);
 
@@ -353,6 +355,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick }) {
                             key={i}
                             className={styles.optionBtn}
                             onClick={() => onOptionClick(opt)}
+                            disabled={disabled}
                         >
                             {opt}
                         </button>

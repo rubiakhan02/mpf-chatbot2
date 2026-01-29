@@ -47,6 +47,12 @@
       "namedRegex": "^/api/chat(?:/)?$"
     },
     {
+      "page": "/api/cities",
+      "regex": "^/api/cities(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/cities(?:/)?$"
+    },
+    {
       "page": "/api/enquiry",
       "regex": "^/api/enquiry(?:/)?$",
       "routeKeys": {},
