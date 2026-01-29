@@ -1,0 +1,3 @@
+module.exports=[87316,a=>{a.v({className:"outfit_1f93e980-module__Dg7xSG__className"})},62925,a=>{"use strict";var b=a.i(7997),c=a.i(87316);let d={className:c.default.className,style:{fontFamily:"'Outfit', 'Outfit Fallback'",fontStyle:"normal"}};function e({children:a}){return(0,b.jsx)("html",{lang:"en",children:(0,b.jsx)("body",{className:d.className,children:a})})}null!=c.default.variable&&(d.variable=c.default.variable),a.s(["default",()=>e,"metadata",0,{title:"MyPropertyFact Chatbot",description:"Your trusted real estate partner."}],62925)}];
+
+//# sourceMappingURL=%5Broot-of-the-server%5D__5966107e._.js.map
