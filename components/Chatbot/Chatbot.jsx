@@ -57,14 +57,18 @@ export default function Chatbot() {
         const userText = text || inputValue.trim();
         if (!userText) return;
 
-        // Reset Logic
+        // Restart Logic: Clear history and start a new session
         if (['restart', 'reset'].includes(userText.toLowerCase())) {
+            const newSessionId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+            setSessionId(newSessionId);
+
             const initialBotMessage = {
                 id: Date.now(),
                 type: 'bot',
                 text: "Hi 👋\nWelcome to My Property Fact!\n\nReady to find the perfect property? 🏡✨\n\nPlease select your property type to get started.",
                 options: ['Commercial', 'Residential', 'New Launch']
             };
+
             setMessages([initialBotMessage]);
             setConversationHistory([]);
             setInputValue('');
@@ -72,6 +76,7 @@ export default function Chatbot() {
             setPlaceholder("Please select an option");
             return;
         }
+
 
         // Add user message
         addMessage(userText, 'user');
@@ -83,6 +88,14 @@ export default function Chatbot() {
         setIsTyping(true);
 
         try {
+            // Frontend Intercept for "Other" city or unknown cities
+            const isCityPrompt = messages[messages.length - 1]?.text?.toLowerCase().includes('which city');
+            const lowText = userText.toLowerCase();
+
+            if (isCityPrompt && lowText === 'other') {
+                // Allow "other" to pass to backend for manual input prompt
+            }
+
             const response = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -166,7 +179,7 @@ export default function Chatbot() {
                 </div>
 
                 <div className={styles.messages}>
-                    {messages.map((msg) => (
+                    {messages.map((msg, index) => (
                         <React.Fragment key={msg.id}>
                             <div className={`${styles.message} ${msg.type === 'user' ? styles.userMessage : styles.botMessage}`}>
                                 {msg.text.split('\n').map((line, i) => <div key={i}>{line}</div>)}
@@ -177,10 +190,12 @@ export default function Chatbot() {
                                     cards={msg.projectCards}
                                     followUp={msg.followUp || "Would you like to see more projects?"}
                                     options={msg.options}
+                                    disabled={index !== messages.length - 1}
                                     onOptionClick={(opt) => {
                                         const lowOpt = opt.toLowerCase();
                                         if (lowOpt === 'yes' || lowOpt === 'yes, please' || lowOpt === 'sure') {
-                                            window.location.href = "https://mypropertyfact.in/projects?propertyType=2&propertyLocation=2&budget=Up+to+1Cr";
+                                            // Redirection handled by backend or manual dynamic link implementation if needed
+                                            sendMessage(opt);
                                         } else {
                                             sendMessage(opt);
                                         }
@@ -212,6 +227,7 @@ export default function Chatbot() {
                                             key={i}
                                             className={styles.optionBtn}
                                             onClick={() => sendMessage(opt)}
+                                            disabled={index !== messages.length - 1}
                                         >
                                             {opt}
                                         </button>
@@ -257,7 +273,7 @@ export default function Chatbot() {
     );
 }
 
-function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick }) {
+function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, disabled }) {
     const sliderRef = useRef(null);
     const [showArrow, setShowArrow] = useState(false);
 
@@ -339,6 +355,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick }) {
                             key={i}
                             className={styles.optionBtn}
                             onClick={() => onOptionClick(opt)}
+                            disabled={disabled}
                         >
                             {opt}
                         </button>
