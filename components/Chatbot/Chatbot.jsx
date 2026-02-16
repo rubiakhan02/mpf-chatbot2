@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './Chatbot.module.css';
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
 const IMAGE_BASE_URL = 'https://apis.mypropertyfact.in/get/images/properties/';
 
 export default function Chatbot() {
@@ -96,7 +97,7 @@ export default function Chatbot() {
                 // Allow "other" to pass to backend for manual input prompt
             }
 
-            const response = await fetch('/api/chat', {
+            const response = await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -384,7 +385,7 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
         setIsSubmitting(true);
 
         try {
-            const response = await fetch('/api/enquiry', {
+            const response = await fetch(`${API_BASE_URL}/api/enquiry`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

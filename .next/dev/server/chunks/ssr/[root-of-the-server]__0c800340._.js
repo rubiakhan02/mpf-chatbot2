@@ -67,6 +67,7 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chatbot$2f$Cha
 ;
 ;
 ;
+const API_BASE_URL = ("TURBOPACK compile-time value", "http://localhost:3000") || '';
 const IMAGE_BASE_URL = 'https://apis.mypropertyfact.in/get/images/properties/';
 function Chatbot() {
     const [isOpen, setIsOpen] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
@@ -172,7 +173,7 @@ function Chatbot() {
             if (isCityPrompt && lowText === 'other') {
             // Allow "other" to pass to backend for manual input prompt
             }
-            const response = await fetch('/api/chat', {
+            const response = await fetch(`${API_BASE_URL}/api/chat`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -239,17 +240,17 @@ function Chatbot() {
                         d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2-2z"
                     }, void 0, false, {
                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                        lineNumber: 156,
+                        lineNumber: 157,
                         columnNumber: 21
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                    lineNumber: 154,
+                    lineNumber: 155,
                     columnNumber: 17
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 149,
+                lineNumber: 150,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -273,12 +274,12 @@ function Chatbot() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 165,
+                                            lineNumber: 166,
                                             columnNumber: 29
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 164,
+                                        lineNumber: 165,
                                         columnNumber: 25
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -287,7 +288,7 @@ function Chatbot() {
                                                 children: "MyPropertyFact"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                                lineNumber: 168,
+                                                lineNumber: 169,
                                                 columnNumber: 29
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -295,19 +296,19 @@ function Chatbot() {
                                                 children: "Online"
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                                lineNumber: 169,
+                                                lineNumber: 170,
                                                 columnNumber: 29
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 167,
+                                        lineNumber: 168,
                                         columnNumber: 25
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                lineNumber: 163,
+                                lineNumber: 164,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -332,7 +333,7 @@ function Chatbot() {
                                             y2: "18"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 175,
+                                            lineNumber: 176,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("line", {
@@ -342,24 +343,24 @@ function Chatbot() {
                                             y2: "18"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 176,
+                                            lineNumber: 177,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                    lineNumber: 173,
+                                    lineNumber: 174,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                lineNumber: 172,
+                                lineNumber: 173,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                        lineNumber: 162,
+                        lineNumber: 163,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -373,12 +374,12 @@ function Chatbot() {
                                                     children: line
                                                 }, i, false, {
                                                     fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                                    lineNumber: 185,
+                                                    lineNumber: 186,
                                                     columnNumber: 72
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 184,
+                                            lineNumber: 185,
                                             columnNumber: 29
                                         }, this),
                                         msg.projectCards && msg.projectCards.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(ProjectSlider, {
@@ -407,7 +408,7 @@ function Chatbot() {
                                             }
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 189,
+                                            lineNumber: 190,
                                             columnNumber: 33
                                         }, this),
                                         msg.followUp && (!msg.projectCards || msg.projectCards.length === 0) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -415,7 +416,7 @@ function Chatbot() {
                                             children: msg.followUp
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 210,
+                                            lineNumber: 211,
                                             columnNumber: 33
                                         }, this),
                                         msg.type === 'form' && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(LeadForm, {
@@ -424,7 +425,7 @@ function Chatbot() {
                                             onSuccess: handleEnquirySuccess
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 216,
+                                            lineNumber: 217,
                                             columnNumber: 33
                                         }, this),
                                         msg.options && msg.options.length > 0 && (!msg.projectCards || msg.projectCards.length === 0) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -436,30 +437,23 @@ function Chatbot() {
                                                     children: opt
                                                 }, i, false, {
                                                     fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                                    lineNumber: 226,
+                                                    lineNumber: 227,
                                                     columnNumber: 41
                                                 }, this))
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 224,
+                                            lineNumber: 225,
                                             columnNumber: 33
                                         }, this)
                                     ]
                                 }, msg.id, true, {
                                     fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                    lineNumber: 183,
+                                    lineNumber: 184,
                                     columnNumber: 25
                                 }, this)),
                             isTyping && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chatbot$2f$Chatbot$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].typing,
                                 children: [
-                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
-                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chatbot$2f$Chatbot$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].dot
-                                    }, void 0, false, {
-                                        fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 241,
-                                        columnNumber: 29
-                                    }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
                                         className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chatbot$2f$Chatbot$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].dot
                                     }, void 0, false, {
@@ -473,24 +467,31 @@ function Chatbot() {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
                                         lineNumber: 243,
                                         columnNumber: 29
+                                    }, this),
+                                    /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                        className: __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$Chatbot$2f$Chatbot$2e$module$2e$css__$5b$app$2d$ssr$5d$__$28$css__module$29$__["default"].dot
+                                    }, void 0, false, {
+                                        fileName: "[project]/components/Chatbot/Chatbot.jsx",
+                                        lineNumber: 244,
+                                        columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                lineNumber: 240,
+                                lineNumber: 241,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                 ref: messagesEndRef
                             }, void 0, false, {
                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                lineNumber: 246,
+                                lineNumber: 247,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                        lineNumber: 181,
+                        lineNumber: 182,
                         columnNumber: 17
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -506,7 +507,7 @@ function Chatbot() {
                                 onKeyPress: (e)=>e.key === 'Enter' && sendMessage()
                             }, void 0, false, {
                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                lineNumber: 250,
+                                lineNumber: 251,
                                 columnNumber: 21
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -531,37 +532,37 @@ function Chatbot() {
                                             y2: "13"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 266,
+                                            lineNumber: 267,
                                             columnNumber: 29
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("polygon", {
                                             points: "22 2 15 22 11 13 2 9 22 2"
                                         }, void 0, false, {
                                             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                            lineNumber: 267,
+                                            lineNumber: 268,
                                             columnNumber: 29
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                    lineNumber: 264,
+                                    lineNumber: 265,
                                     columnNumber: 25
                                 }, this)
                             }, void 0, false, {
                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                lineNumber: 259,
+                                lineNumber: 260,
                                 columnNumber: 21
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                        lineNumber: 249,
+                        lineNumber: 250,
                         columnNumber: 17
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 161,
+                lineNumber: 162,
                 columnNumber: 13
             }, this)
         ]
@@ -604,7 +605,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                                 onError: (e)=>e.target.src = 'https://via.placeholder.com/300x200?text=No+Image'
                             }, void 0, false, {
                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                lineNumber: 305,
+                                lineNumber: 306,
                                 columnNumber: 25
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -614,7 +615,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                                         children: card.name
                                     }, void 0, false, {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 311,
+                                        lineNumber: 312,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -625,7 +626,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 312,
+                                        lineNumber: 313,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -636,7 +637,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                                                 children: card.price
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                                lineNumber: 314,
+                                                lineNumber: 315,
                                                 columnNumber: 33
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
@@ -644,13 +645,13 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                                                 children: card.status
                                             }, void 0, false, {
                                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                                lineNumber: 315,
+                                                lineNumber: 316,
                                                 columnNumber: 33
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 313,
+                                        lineNumber: 314,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -661,7 +662,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 317,
+                                        lineNumber: 318,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -670,7 +671,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                                         children: "View Details"
                                     }, void 0, false, {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 318,
+                                        lineNumber: 319,
                                         columnNumber: 29
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -679,24 +680,24 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                                         children: "Enquire"
                                     }, void 0, false, {
                                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                        lineNumber: 319,
+                                        lineNumber: 320,
                                         columnNumber: 29
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                                lineNumber: 310,
+                                lineNumber: 311,
                                 columnNumber: 25
                             }, this)
                         ]
                     }, i, true, {
                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                        lineNumber: 304,
+                        lineNumber: 305,
                         columnNumber: 21
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 298,
+                lineNumber: 299,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -705,7 +706,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                 children: "→"
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 324,
+                lineNumber: 325,
                 columnNumber: 13
             }, this),
             (followUp || cards && cards.length > 0) && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -725,7 +726,7 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                 children: followUp || "Would you like to see more projects?"
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 332,
+                lineNumber: 333,
                 columnNumber: 17
             }, this),
             options && options.length > 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -742,18 +743,18 @@ function ProjectSlider({ cards, onEnquire, followUp, options, onOptionClick, dis
                         children: opt
                     }, i, false, {
                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                        lineNumber: 354,
+                        lineNumber: 355,
                         columnNumber: 25
                     }, this))
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 352,
+                lineNumber: 353,
                 columnNumber: 17
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-        lineNumber: 297,
+        lineNumber: 298,
         columnNumber: 9
     }, this);
 }
@@ -781,7 +782,7 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
         setError('');
         setIsSubmitting(true);
         try {
-            const response = await fetch('/api/enquiry', {
+            const response = await fetch(`${API_BASE_URL}/api/enquiry`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -816,12 +817,12 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
                 children: "Thank you for sharing your details. Our consultant will contact you within 24 hours."
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 418,
+                lineNumber: 419,
                 columnNumber: 17
             }, this)
         }, void 0, false, {
             fileName: "[project]/components/Chatbot/Chatbot.jsx",
-            lineNumber: 417,
+            lineNumber: 418,
             columnNumber: 13
         }, this);
     }
@@ -834,20 +835,20 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
                     "Please share your details for",
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("br", {}, void 0, false, {
                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                        lineNumber: 425,
+                        lineNumber: 426,
                         columnNumber: 76
                     }, this),
                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("strong", {
                         children: projectName
                     }, void 0, false, {
                         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                        lineNumber: 425,
+                        lineNumber: 426,
                         columnNumber: 82
                     }, this)
                 ]
             }, void 0, true, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 425,
+                lineNumber: 426,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -858,7 +859,7 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
                 onChange: (e)=>setName(e.target.value)
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 426,
+                lineNumber: 427,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -870,7 +871,7 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
                 onChange: (e)=>setMobile(e.target.value)
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 433,
+                lineNumber: 434,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -881,7 +882,7 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
                 onChange: (e)=>setEmail(e.target.value)
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 441,
+                lineNumber: 442,
                 columnNumber: 13
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -891,7 +892,7 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
                 children: isSubmitting ? 'Submitting... ⏳' : 'Submit'
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 448,
+                lineNumber: 449,
                 columnNumber: 13
             }, this),
             error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -899,13 +900,13 @@ function LeadForm({ projectName, sessionId, onSuccess }) {
                 children: error
             }, void 0, false, {
                 fileName: "[project]/components/Chatbot/Chatbot.jsx",
-                lineNumber: 455,
+                lineNumber: 456,
                 columnNumber: 23
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/components/Chatbot/Chatbot.jsx",
-        lineNumber: 424,
+        lineNumber: 425,
         columnNumber: 9
     }, this);
 }
