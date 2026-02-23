@@ -173,8 +173,8 @@ module.exports = pool;
 "[project]/lib/chatbot-logic.js [app-route] (ecmascript)", ((__turbopack_context__, module, exports) => {
 
 const axios = __turbopack_context__.r("[project]/node_modules/axios/dist/node/axios.cjs [app-route] (ecmascript)");
-const API_URL = 'https://apis.mypropertyfact.in/projects/search-by-type-city-budget';
-const IMAGE_BASE_URL = 'https://apis.mypropertyfact.in/get/images/properties/';
+const API_URL = 'https://apis.mypropertyfact.in/api/v1/projects/search-by-type-city-budget';
+const IMAGE_BASE_URL = 'https://apis.mypropertyfact.in/api/v1/get/images/properties/';
 const PROPERTY_TYPE_MAP = {
     'residential': 1,
     'commercial': 2,
@@ -652,11 +652,45 @@ async function generateAIResponse(message, sessionId) {
                 'yes, please',
                 'sure'
             ].includes(msg)) {
+                // If more projects remain in the fetched batch, show next 3
+                const remaining = session.data.allProjects ? session.data.allProjects.slice(session.data.currentIndex, session.data.currentIndex + 3) : [];
+                if (remaining.length > 0) {
+                    session.data.currentIndex += 3;
+                    const hasMore = session.data.currentIndex < session.data.allProjects.length;
+                    const cards = remaining.map((p)=>{
+                        const slug = p.projectSlug || p.projectName.toLowerCase().replace(/&/g, 'and').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+                        const fullImageUrl = p.projectThumbnailImage && p.projectThumbnailImage.startsWith('http') ? p.projectThumbnailImage : p.projectThumbnailImage ? `${IMAGE_BASE_URL}${slug}/${p.projectThumbnailImage}` : 'https://via.placeholder.com/300x200?text=No+Image';
+                        return {
+                            id: p.id,
+                            name: p.projectName,
+                            location: p.projectAddress || p.cityName,
+                            price: p.projectStartingPrice || 'Price on Request',
+                            image: fullImageUrl,
+                            builder: p.builderName,
+                            status: p.projectStatusName,
+                            link: `https://mypropertyfact.in/${slug}`
+                        };
+                    });
+                    const options = hasMore ? [
+                        'Yes',
+                        'No'
+                    ] : [
+                        'Restart'
+                    ];
+                    const followUp = hasMore ? `Would you like to see more projects?` : null;
+                    return {
+                        reply: `Here are more projects:`,
+                        followUp: followUp,
+                        projectCards: cards,
+                        options: options
+                    };
+                }
+                // All local projects shown — redirect to website for full listing
                 const typeId = PROPERTY_TYPE_MAP[session.data.type] || 1;
                 const cityId = CITY_MAP[session.data.city] || 2;
                 const cityName = encodeURIComponent(session.data.city || "");
                 const apiBudget = session.data.budget;
-                const targetUrl = `https://mypropertyfact.in/projects?propertyType=${typeId}&propertyLocation=${cityId}&cityName=${cityName}&budget=${encodeURIComponent(apiBudget)}`;
+                const targetUrl = `https://mypropertyfact.in/api/v1/projects?propertyType=${typeId}&propertyLocation=${cityId}&cityName=${cityName}&budget=${encodeURIComponent(apiBudget)}`;
                 return {
                     reply: `Redirecting you to view more projects on our website...`,
                     redirectUrl: targetUrl
@@ -714,13 +748,12 @@ async function processEnquiry({ name, mobile, email, project, sessionId }) {
             city || 'N/A',
             budget || 'N/A'
         ]);
-        console.log('[Lead] Saved to MySQL:', name, mobile);
     } catch (dbErr) {
-        console.log('[Lead] MySQL unavailable, skipping local storage:', dbErr.code || dbErr.message);
+        console.log('[Lead] MySQL unavailable:', dbErr.code || dbErr.message);
     }
     // 2. External API Integration
     try {
-        const externalResponse = await axios.post('https://apis.mypropertyfact.in/enquiry/post', {
+        const externalResponse = await axios.post('https://apis.mypropertyfact.in/api/v1/enquiry/post', {
             name: name,
             email: email,
             phone: mobile,
@@ -731,7 +764,6 @@ async function processEnquiry({ name, mobile, email, project, sessionId }) {
             status: "PENDING",
             id: 0
         });
-        console.log(`[Lead] External API Response:`, externalResponse.data);
         if (externalResponse.data && externalResponse.data.isSuccess === 1) {
             return {
                 status: 200,
