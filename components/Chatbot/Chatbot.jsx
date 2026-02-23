@@ -97,7 +97,11 @@ export default function Chatbot() {
                 // Allow "other" to pass to backend for manual input prompt
             }
 
+<<<<<<< HEAD
             const response = await fetch(`${API_BASE_URL}/api/chat`, {
+=======
+            const response = await fetch('/api/chat', {
+>>>>>>> 2dd2c3c7cdd691fe66acac4f0ceec9eea29ddcab
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
